@@ -1,9 +1,9 @@
 import axios from "axios";
-
+import config from "../config/config";
 class Auth {
     async register({ fullname, username, email, password }) {
         try {
-            const response = await axios.post("", {
+            const response = await axios.post(`${config.server_url}/users/login`, {
                 fullname, username, email, password
             });
             if (response.data.success) {
@@ -17,7 +17,7 @@ class Auth {
     }
     async login({ username, password }) {
         try {
-            const response = await axios.post("", { username, password });
+            const response = await axios.post(`${config.server_url}/users/login`, { username, password });
             if (response.data.success) {
                 return response.data.data;
             } else {
@@ -28,3 +28,7 @@ class Auth {
         }
     }
 }
+
+const auth = new Auth();
+
+export default Auth;
