@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Loader as LoaderIcon } from "lucide-react";
 
 export default function AuthLayout({ children }) {
     const navigate = useNavigate();
     const [loader, setLoader] = useState(true);
     const authStatus = useSelector(state => state.authStatus);
-    console.log(authStatus);
+
     useEffect(() => {
         if (authStatus) {
-            navigate("/app")
+            navigate("/app");
         } else {
-            navigate("/login");
+            navigate("/");
         }
         setLoader(false);
     }, [authStatus, navigate]);
 
-    return (loader ? <h1>Loading..</h1> : <>{children}</>);
+    return (loader ? (
+        <div className="flex items-center justify-center h-screen">
+            <LoaderIcon className="size-10 animate-spin" />
+        </div>
+    ) : <>{children}</>);
 }
