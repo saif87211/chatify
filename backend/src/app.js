@@ -2,7 +2,7 @@ import { config } from "./config/config.js";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -24,9 +24,6 @@ app.use("/api/v1/messages", messageRoutes);
 
 
 //error handler
-app.use((err, req, res, next) => {
-    console.log(err);
-    return res.status(err.statuscode).json({ ...err, message: err.message });
-});
+app.use(errorHandler);
 
 export { app };
