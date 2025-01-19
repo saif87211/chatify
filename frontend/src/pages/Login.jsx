@@ -1,5 +1,10 @@
+import { Link } from "react-router-dom";
 export default function Login() {
     return (
-        <div>Login</div>
+        <div>
+            <Link className="link" to="/app">App</Link>
+            Login
+        </div>
+        
     );
 }
