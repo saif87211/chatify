@@ -15,7 +15,10 @@ const generateToken = async (userId) => {
     }
 }
 
-const cookieOptions = { httpOnly: true, secure: true };
+const cookieOptions = {
+    httpOnly: true,
+    // secure: true
+};
 
 const register = asyncHandler(async (req, res) => {
     const { fullname, username, email, password } = req.body;

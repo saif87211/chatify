@@ -1,34 +1,35 @@
-import axios from "axios";
-import config from "../config/config";
+import { axiosInstance } from "../config/axios";
 class Auth {
     async register({ fullname, username, email, password }) {
         try {
-            const response = await axios.post(`${config.server_url}/users/login`, {
+            const response = await axiosInstance.post("/users/register", {
                 fullname, username, email, password
             });
-            if (response.data.success) {
-                return response.data.data;
-            } else {
-                throw new Error(response.data.message || 'Failed to create account.');
-            }
+            console.log(response);
+            return response.data;
         } catch (error) {
             throw error;
         }
     }
     async login({ username, password }) {
         try {
-            const response = await axios.post(`${config.server_url}/users/login`, { username, password });
-            if (response.data.success) {
-                return response.data.data;
-            } else {
-                throw new Error(response.data.message || 'Failed to login');
-            }
+            const response = await axiosInstance.post("/users/login", { username, password });
+            return response.data;
         } catch (error) {
-
+            throw error;
+        }
+    }
+    async getCurrentUser() {
+        try {
+            const response = await axiosInstance.post("/users/getuser", {});
+            console.log(response.data)
+            return response.data.data;
+        } catch (error) {
+            throw error;
         }
     }
 }
 
 const auth = new Auth();
 
-export default Auth;
+export default auth;
