@@ -7,7 +7,7 @@ export default function Register() {
     return (
         <div className="min-h-screen grid lg:grid-cols-2">
             {/* Left side */}
-            <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+            <div className="flex flex-col justify-center items-center p-6 sm:p-20">
                 <div className="w-full max-w-md space-y-8">
                     {/* Logo */}
                     <div className="text-center mb-8">
@@ -31,7 +31,7 @@ export default function Register() {
                 </div>
             </div>
             {/* Right Side */}
-            <div className="hidden lg:flex items-center justify-center bg-base-200 p-12">
+            <div className="hidden lg:flex items-center justify-center bg-base-200 p-20">
                 <div className="max-w-md text-center">
                     <img className="motion-safe:animate-pulse" src={chatSvg} />
                     <h2 className="text-2xl font-bold mb-4 pt-10">Connectify</h2>
