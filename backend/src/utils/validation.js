@@ -1,14 +1,14 @@
 import { z } from "zod";
 
-const userSignUpSchema = z.object({
+const userRegisterSchema = z.object({
     fullname: z.string().min(1, { message: 'full name is required' }),
     username: z.string().min(1, { message: 'username is required' }),
     email: z.string().email({ message: 'Invalid email address' }),
     password: z.string().min(8, { message: 'Password must be at least 8 characters' })
 });
 
-const userSignInSchema = z.object({
-    username: z.string().min(1, { message: 'username is required' }),
+const userLoginSchema = z.object({
+    email: z.string().email({ message: 'Invalid email address' }),
     password: z.string().min(8, { message: 'Password must be at least 8 characters' })
 });
 
@@ -17,10 +17,10 @@ const updateUserSchema = z.object({
     email: z.string().email({ message: 'Invalid email address' }),
 });
 
-const validateSignUpFileds = (userSignUpData) => userSignUpSchema.safeParse(userSignUpData);
+const validateRegisterFileds = (userRegisterData) => userRegisterSchema.safeParse(userRegisterData);
 
-const validateSignInFileds = (userSignInData) => userSignInSchema.safeParse(userSignInData);
+const validateLoginFileds = (userLoginData) => userLoginSchema.safeParse(userLoginData);
 
 const validateUpdateFileds = (userUpdateData) => updateUserSchema.safeParse(userUpdateData);
 
-export { validateSignUpFileds, validateSignInFileds, validateUpdateFileds };
+export { validateRegisterFileds, validateLoginFileds, validateUpdateFileds };

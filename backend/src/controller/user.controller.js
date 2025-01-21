@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { validateSignUpFileds, validateSignInFileds, validateUpdateFileds } from "../utils/validation.js";
+import { validateRegisterFileds, validateLoginFileds, validateUpdateFileds } from "../utils/validation.js";
 
 
 const generateToken = async (userId) => {
@@ -23,7 +23,7 @@ const cookieOptions = {
 const register = asyncHandler(async (req, res) => {
     const { fullname, username, email, password } = req.body;
 
-    const zodValidation = validateSignUpFileds({ fullname, username, email, password });
+    const zodValidation = validateRegisterFileds({ fullname, username, email, password });
 
     if (!zodValidation.success) {
         throw new ApiError(400, "Input validation error");
@@ -54,15 +54,15 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const zodValidation = validateSignInFileds({ username, password });
+    const zodValidation = validateLoginFileds({ email, password });
 
     if (!zodValidation.success) {
         throw new ApiError(400, "Input validation error");
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
 
     if (!user) {
         throw new ApiError(404, "User does not exist.");
@@ -81,7 +81,7 @@ const login = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .cookie("token", token, cookieOptions)
-        .json(new ApiResponse(200, { loginUser, token }, "User logged successfully"));
+        .json(new ApiResponse(200, { loginUser, token }, "User logged in successfully"));
 });
 
 const logout = asyncHandler(async (req, res) => {

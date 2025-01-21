@@ -1,13 +1,21 @@
-import { LogOut, MessageSquare, Settings } from "lucide-react";
+import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../slices/authSlice";
+import auth from "../api/auth";
 
 export default function Navbar() {
     const authStatus = useSelector(state => state.authStatus);
     const dispatch = useDispatch();
-    const handleLogout = () => dispatch(logout());
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        const response = await auth.logout();
+        console.log(response);
+        dispatch(logout());
+        navigate("/");
+    };
     return (
         <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 
     backdrop-blur-lg bg-base-100/80">

@@ -5,15 +5,14 @@ class Auth {
             const response = await axiosInstance.post("/users/register", {
                 fullname, username, email, password
             });
-            console.log(response);
             return response.data;
         } catch (error) {
             throw error;
         }
     }
-    async login({ username, password }) {
+    async login({ email, password }) {
         try {
-            const response = await axiosInstance.post("/users/login", { username, password });
+            const response = await axiosInstance.post("/users/login", { email, password });
             return response.data;
         } catch (error) {
             throw error;
@@ -22,8 +21,15 @@ class Auth {
     async getCurrentUser() {
         try {
             const response = await axiosInstance.post("/users/getuser", {});
-            console.log(response.data)
             return response.data.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async logout() {
+        try {
+            const response = await axiosInstance.post("/users/logout", {});
+            return response.data;
         } catch (error) {
             throw error;
         }
