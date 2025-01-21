@@ -28,7 +28,7 @@ export default function Register() {
                 if (user) {
                     dispatch(login(user));
                 }
-                // navigate("/app");
+                navigate("/app");
             }
         } catch (error) {
             console.log(error);

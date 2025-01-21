@@ -33,7 +33,7 @@ export default function AuthLayout({ children }) {
         }
 
         checkAutheticaion();
-    }, [authStatus, navigate, dispatch]);
+    }, []);
 
     return (loader ? (
         <div className="flex items-center justify-center h-screen">
