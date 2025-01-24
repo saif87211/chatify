@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { validateRegisterFileds, validateLoginFileds, validateUpdateFileds } from "../utils/validation.js";
-
+import { uploadFileOnCloudinary, deleteFileOnCloudinary } from "../utils/cloudinary.js";
 
 const generateToken = async (userId) => {
     try {
@@ -140,4 +140,28 @@ const updateUserAccountDetails = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, user, "User data updated successfully."));
 });
 
-export { register, login, logout, changeCurrentPassword, getCurrentUser, updateUserAccountDetails };
+const updateUserProfileImage = asyncHandler(async (req, res) => {
+    const imageLocalPath = req.file?.path;
+
+    if (!imageLocalPath) {
+        throw new ApiError(400, "Profile picture is missing.");
+    }
+
+    const newImageUrl = await uploadFileOnCloudinary(imageLocalPath);
+
+    const user = await User.findById(req.user?._id).select("-password");
+
+    const oldImageUrl = user.profilephoto;
+
+    user.profilephoto = newImageUrl.url;
+
+    await user.save({ validateBeforeSave: true });
+
+    if (oldImageUrl) {
+        await deleteFileOnCloudinary(oldImageUrl);
+    }
+
+    return res.status(200).json(new ApiResponse(200, user, "profile picture update successfully."));
+});
+
+export { register, login, logout, changeCurrentPassword, getCurrentUser, updateUserAccountDetails, updateUserProfileImage };
