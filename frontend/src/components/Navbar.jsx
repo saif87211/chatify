@@ -6,7 +6,7 @@ import { logout } from "../slices/authSlice";
 import auth from "../api/auth";
 
 export default function Navbar() {
-    const authStatus = useSelector(state => state.authStatus);
+    const authStatus = useSelector(state => state.authSlice.authStatus);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 

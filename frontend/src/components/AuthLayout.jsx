@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 export default function AuthLayout({ children }) {
     const navigate = useNavigate();
     const [loader, setLoader] = useState(true);
-    const authStatus = useSelector(state => state.authStatus);
+    const authStatus = useSelector(state => state.authSlice.authStatus);
     const dispatch = useDispatch();
 
     useEffect(() => {

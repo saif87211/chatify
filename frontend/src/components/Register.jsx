@@ -12,7 +12,7 @@ export default function Register() {
     const dispatch = useDispatch();
     const [showPassword, setShowPassword] = useState(false);
     const { register, handleSubmit } = useForm();
-    const authStatus = useSelector(state => state.authStatus);
+    const authStatus = useSelector(state => state.authSlice.authStatus);
 
     useEffect(() => {
         if (authStatus) {
