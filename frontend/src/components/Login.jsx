@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -12,12 +12,18 @@ export default function Login() {
     const { register, handleSubmit } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const dispatch = useDispatch();
+    const authStatus = useSelector(state => state.authStatus);
+
+    useEffect(() => {
+        if (authStatus) {
+            navigate("/app");
+        }
+    }, []);
 
     const showPasswordHandler = () => {
         setShowPassword(!showPassword);
     };
-    const login = async (data) => {
-        console.log("trigger");
+    const handleLogin = async (data) => {
         try {
             const response = await auth.login(data);
             if (response.data.loginuser) {
@@ -30,7 +36,7 @@ export default function Login() {
     };
 
     return (
-        <form className="space-y-6" onSubmit={handleSubmit(login)}>
+        <form className="space-y-6" onSubmit={handleSubmit(handleLogin)}>
             <div className="form-control">
                 <label className="label">
                     <span className="label-text font-medium">Mail</span>

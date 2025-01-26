@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -12,6 +12,13 @@ export default function Register() {
     const dispatch = useDispatch();
     const [showPassword, setShowPassword] = useState(false);
     const { register, handleSubmit } = useForm();
+    const authStatus = useSelector(state => state.authStatus);
+
+    useEffect(() => {
+        if (authStatus) {
+            navigate("/app");
+        }
+    }, []);
 
     const showPasswordHandler = () => {
         setShowPassword(!showPassword);
