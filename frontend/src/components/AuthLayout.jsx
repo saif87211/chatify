@@ -25,7 +25,8 @@ export default function AuthLayout({ children }) {
                     }
                 }
             } catch (error) {
-                toast.error(error?.response.data.message || "Authenticaion error");
+                const message = error?.response ? (error?.response.data.message) : "Authenticaion error";
+                toast.error(message);
                 navigate("/");
             } finally {
                 setLoader(false);
