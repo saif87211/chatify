@@ -26,8 +26,7 @@ export default function Register() {
     const create = async (data) => {
         try {
             const registerResponse = await authService.register(data);
-
-            const user = registerResponse?.createdUser;
+            const user = registerResponse?.data.createdUser;
             if (user) {
                 toast.success(registerResponse?.message || "Register succefully");
                 dispatch(login(user));
