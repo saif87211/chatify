@@ -30,11 +30,7 @@ export default function Register() {
             const user = registerResponse?.createdUser;
             if (user) {
                 toast.success(registerResponse?.message || "Register succefully");
-                const loginResponse = await authService.login(data);
-                const user = loginResponse?.data.loginUser;
-                if (user) {
-                    dispatch(login(user));
-                }
+                dispatch(login(user));
                 navigate("/app");
             }
         } catch (error) {

@@ -50,7 +50,12 @@ const register = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Something went wrong while registering user!");
     }
 
-    return res.status(201).json(new ApiResponse(201, createdUser, "User register succefully"));
+    const token = await generateToken(createdUser._id);
+
+    return res
+        .status(201)
+        .cookie("token", token, cookieOptions)
+        .json(new ApiResponse(201, { createdUser, token }, "User register succefully"));
 });
 
 const login = asyncHandler(async (req, res) => {
