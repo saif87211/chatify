@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadFileOnCloudinary } from "../utils/cloudinary.js";
 
 const getUsersForSideBar = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
@@ -13,7 +14,7 @@ const getUsersForSideBar = asyncHandler(async (req, res) => {
 });
 
 const getMessages = asyncHandler(async (req, res) => {
-    const receiverUserId = req.body.receiverUserId;
+    const receiverUserId = req.params?.id;
     const currentUserId = req.user?._id;
 
     if (!receiverUserId) {
@@ -35,21 +36,22 @@ const getMessages = asyncHandler(async (req, res) => {
 });
 
 const sendMessage = asyncHandler(async (req, res) => {
-    const { text, image } = req.body;
+    const text = req.body.text;
+    const imageLocalPath = req.file?.path;
 
-    const receiverId = req.params;
+    const receiverId = req.params.id;
     const senderId = req.user._id;
 
-    let imageUrl;
-    if (image) {
-        //TODO: uplaod 
+    let cloudinaryResponse;
+    if (imageLocalPath) {
+        cloudinaryResponse = await uploadFileOnCloudinary(imageLocalPath);
     }
 
     const newMessage = await Message.create({
         senderId,
         receiverId,
         text,
-        // image: imageUrl,
+        image: cloudinaryResponse?.url,
     });
 
     //TODO: SOCKET implementation
