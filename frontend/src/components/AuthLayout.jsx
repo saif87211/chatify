@@ -21,13 +21,13 @@ export default function AuthLayout({ children }) {
                         dispatch(login(user));
                     } else {
                         dispatch(logout());
-                        navigate("/");
+                        navigate("/login");
                     }
                 }
             } catch (error) {
                 const message = error?.response ? (error?.response.data.message) : "Authenticaion error";
                 toast.error(message);
-                navigate("/");
+                navigate("/login");
             } finally {
                 setLoader(false);
             }

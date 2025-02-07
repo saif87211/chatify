@@ -11,10 +11,10 @@ import './index.css';
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path='/' element=<Layout /> >
-    <Route path='/' element=<Login /> />
+    <Route path='/login' element=<Login /> />
     <Route path='/register' element=<Register /> />
     <Route path='/settings' element=<Settings /> />
-    <Route path='/app' element=<AuthLayout><App /></AuthLayout> />
+    <Route path='/' element=<AuthLayout><App /></AuthLayout> />
     <Route path='/profile' element=<AuthLayout><Profile /></AuthLayout> />
   </Route >
 ))
