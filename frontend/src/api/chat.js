@@ -17,9 +17,12 @@ class Chat {
             throw error;
         }
     }
-    async sendMessage(id) {
+    async sendMessage(currentUserId, text, image = null) {
         try {
-            const response = await axiosInstance.post(`/messages/send/${id}`);
+            const formData = new FormData();
+            formData.append("text", text);
+            formData.append("image", image);
+            const response = await axiosInstance.post(`/messages/send/${currentUserId}`, formData);
             return response.data;
         } catch (error) {
             throw error;

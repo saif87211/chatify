@@ -1,23 +1,25 @@
 import { Camera, Mail } from "lucide-react";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../slices/authSlice";
+import { toast } from "react-hot-toast";
+import auth from "../api/auth";
 
 export default function Profile() {
-    const [profilePicutre, setProfilePicutre] = useState(null);
     const userData = useSelector(state => state.authSlice.authUserData);
-
+    const dispatch = useDispatch();
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        reader.onload = async () => {
-            const base64Image = reader.result;
-            setProfilePicutre(base64Image);
-            //TODO: API CALLING FILE UPLOADING
-        };
+        try {
+            const response = await auth.updateProfilePicture(file);
+            if (response.success) {
+                dispatch(login(response.data));
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data.message || "Something went wrong while uploading profile");
+        }
     }
     return (
         <div className="pt-20">
@@ -30,7 +32,7 @@ export default function Profile() {
                     {/* Image Upload */}
                     <div className="flex flex-col items-center gap-4">
                         <div className="relative">
-                            <img className="size-32 rounded-full object-cover border-4" src={userData?.profilephoto || profilePicutre || "user.png"} />
+                            <img className="size-32 rounded-full object-cover border-4" src={userData?.profilephoto || "user.png"} />
                             <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 bg-base-content hover:scale-105 p-2 rounded-full cursor-pointer transition-all duration-200">
                                 <Camera className="w-5 h-5 text-base-200" />
                                 <input type="file" id="avatar-upload" className="hidden" accept="image/*" onChange={handleImageUpload} />

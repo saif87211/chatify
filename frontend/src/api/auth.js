@@ -34,6 +34,16 @@ class Auth {
             throw error;
         }
     }
+    async updateProfilePicture(image) {
+        try {
+            const formdata = new FormData();
+            formdata.append("profilephoto", image);
+            const response = await axiosInstance.patch("/users/profilephoto", formdata);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 const auth = new Auth();
