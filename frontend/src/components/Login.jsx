@@ -29,7 +29,7 @@ export default function Login() {
             if (response.data.loginuser) {
                 dispatch(login(response.data.loginuser));
             }
-            navigate("/app");
+            navigate("/");
         } catch (error) {
             toast.error(error.response?.data.message || "Something went wrong.");
         }

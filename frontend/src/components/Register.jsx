@@ -30,7 +30,7 @@ export default function Register() {
             if (user) {
                 toast.success(registerResponse?.message || "Register succefully");
                 dispatch(login(user));
-                navigate("/app");
+                navigate("/");
             }
         } catch (error) {
             console.log(error);
