@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import chatService from "../api/chat";
 import { setMessages, resetSelectedUser } from "../slices/chatSlice";
 import { ChatHeader, MessageSkeletion, MessageInput } from "./index";
+import useSocket from "../hooks/useSocket";
 
 const formatMessageTime = (date) => new Date(date).toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -18,6 +19,8 @@ export default function ChatContainer() {
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
     const selectedUser = useSelector(state => state.chatSlice.selectedUser);
     const messageEndRef = useRef(null);
+    const socket = useSocket(authUser?._id);
+
     useEffect(() => {
         const getMessages = async () => {
             setIsMessagesLoading(true);
@@ -34,14 +37,31 @@ export default function ChatContainer() {
             }
         }
         getMessages();
-    }, [selectedUser]);
+    }, [selectedUser, dispatch]);
 
     useEffect(() => {
-        console.log(messageEndRef.current);
-        if (messageEndRef.current && messages) {
+        if (socket) {
+            socket.on("newMessage", (newMessage) => {
+                console.log("newMessage:", newMessage)
+                const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+
+                if (!isMessageSentFromSelectedUser) return;
+
+                dispatch(setMessages([newMessage]));
+            });
+        }
+        return () => {
+            if (socket) {
+                socket.off('newMessage');
+            }
+        };
+    }, [socket, selectedUser, dispatch]);
+
+    useEffect(() => {
+        if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
-    }, [messages]);
+    }, [messages, isMessagesLoading]);
 
     return (isMessagesLoading ? (
         <div className="flex-1 flex flex-col overflow-auto">
@@ -65,7 +85,8 @@ export default function ChatContainer() {
                                 {formatMessageTime(message.createdAt)}
                             </time>
                         </div>
-                        <div className="chat-bubble flex flex-col">
+                        <div className="chat-bubble text-wrap flex flex-col">
+                            <p>{message._id}</p>
                             {message.image && (
                                 <img src={message.image} className="sm:max-w-[200px] rounded-md mb-2" alt="Attachment" />
                             )}

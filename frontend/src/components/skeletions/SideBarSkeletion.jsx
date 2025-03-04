@@ -3,7 +3,7 @@ import { Users } from "lucide-react";
 export default function SideBarSkeletion() {
     const skeletonContacts = Array(8).fill(null);
     return (
-        <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
+        <aside className="h-full min-w-full lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
             {/* Header */}
             <div className="border-b border-base-300 w-full p-5">
                 <div className="flex items-center gap-2">
@@ -20,7 +20,7 @@ export default function SideBarSkeletion() {
                             <div className="skeleton size-12 rounded-full" />
                         </div>
                         {/* User info skeleton - only visible on larger screens */}
-                        <div className="hidden lg:block text-left min-w-0 flex-1">
+                        <div className="lg:block text-left min-w-0 flex-1">
                             <div className="skeleton h-4 w-32 mb-2" />
                             <div className="skeleton h-3 w-16" />
                         </div>

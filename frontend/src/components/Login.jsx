@@ -26,8 +26,8 @@ export default function Login() {
     const handleLogin = async (data) => {
         try {
             const response = await auth.login(data);
-            if (response.data.loginuser) {
-                dispatch(login(response.data.loginuser));
+            if (response.data?.loginUser) {
+                dispatch(login(response.data.loginUser));
             }
             navigate("/");
         } catch (error) {

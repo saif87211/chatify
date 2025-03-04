@@ -20,7 +20,7 @@ const router = createBrowserRouter(createRoutesFromElements(
 ))
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
       <Toaster toastOptions={{ duration: 2500 }} >
@@ -41,5 +41,5 @@ createRoot(document.getElementById('root')).render(
         )}
       </Toaster>
     </Provider>
-  </StrictMode>,
+  // </StrictMode>,
 )

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../slices/authSlice";
 import auth from "../api/auth";
+import { resetSelectedUser } from "../slices/chatSlice";
 
 export default function Navbar() {
     const authStatus = useSelector(state => state.authSlice.authStatus);
@@ -12,9 +13,9 @@ export default function Navbar() {
 
     const handleLogout = async () => {
         const response = await auth.logout();
-        console.log(response);
         dispatch(logout());
-        navigate("/");
+        dispatch(resetSelectedUser())
+        navigate("/login");
     };
     return (
         <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 
@@ -22,7 +23,7 @@ export default function Navbar() {
             <div className="container mx-auto px-4 h-16">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center gap-8">
-                        <Link to="/app" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
+                        <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
                             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
                                 <MessageSquare className="w-5 h-5 text-primary" />
                             </div>

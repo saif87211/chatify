@@ -14,14 +14,21 @@ const chatSlice = createSlice({
             state.users = action.payload;
         },
         setSlectedUser: (state, action) => {
+            state.messages = [];
             state.selectedUser = action.payload;
         },
         setMessages: (state, action) => {
-            state.messages = action.payload;
+            console.log("action.payload: ", action.payload);
+            state.messages = [...state.messages, ...action.payload];
+            console.log(state.messages, " :state.messages");
+            console.log(state.messages.length, " :state.messages.length");
         },
         resetSelectedUser: (state, action) => {
             state.selectedUser = null;
-            state.messages = null;
+            state.messages = [];
+            if (action.payload === "logout") {
+                state.users = [];
+            }
         }
     }
 });

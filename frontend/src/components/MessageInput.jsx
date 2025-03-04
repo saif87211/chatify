@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { X, Image, Send } from "lucide-react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessages } from "../slices/chatSlice";
 import chatService from "../api/chat";
 
 export default function MessageInput() {
@@ -10,6 +11,8 @@ export default function MessageInput() {
     const [selectedImage, setSelectedImage] = useState(null);
     const fileInputRef = useRef(null);
     const selectedUser = useSelector(state => state.chatSlice.selectedUser);
+    const messages = useSelector(state => state.chatSlice.messages);
+    const disptach = useDispatch();
 
     const handleImage = (e) => {
         const file = e.target.files[0];
@@ -39,6 +42,10 @@ export default function MessageInput() {
 
         try {
             const response = await chatService.sendMessage(selectedUser._id, text.trim(), selectedImage);
+            const newMessage = response?.data.newMessage;
+            if (newMessage) {
+                disptach(setMessages([newMessage]));
+            }
             setText("");
             setImagePreview(null);
             setSelectedImage(null);
