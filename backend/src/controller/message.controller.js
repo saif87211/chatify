@@ -4,6 +4,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadFileOnCloudinary } from "../utils/cloudinary.js";
+import { io } from "../app.js";
+import { getReceiverSocketId } from "../socket.js";
 
 const getUsersForSideBar = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
@@ -53,8 +55,13 @@ const sendMessage = asyncHandler(async (req, res) => {
         text,
         image: cloudinaryResponse?.url,
     });
-
+    console.log(receiverId, "receiverId");
     //TODO: SOCKET implementation
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    console.log("receiverSocketId:", receiverSocketId);
+    if (receiverSocketId) {
+        io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     return res.status(200).json(new ApiResponse(200, { newMessage }));
 });

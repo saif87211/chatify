@@ -1,6 +1,6 @@
 import dbConnect from "./db/db.js";
-import { app } from "./app.js";
 import { config } from "./config/config.js";
+import { server, app } from "./app.js";
 
 dbConnect()
     .then(() => {
@@ -9,7 +9,7 @@ dbConnect()
             throw error;
         });
 
-        app.listen(config.port || 8000, () => {
+        server.listen(config.port || 8000, () => {
             console.log(`⚙ Server is running at port ${config.port}`);
         });
     })

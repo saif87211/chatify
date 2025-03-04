@@ -2,10 +2,16 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import http from "http";
 import { config } from "./config/config.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import intializeSocket from "./socket.js";
 
 const app = express();
+
+const server = http.createServer(app);
+
+const io = intializeSocket(server);
 
 app.use(cors({
     origin: config.origin,
@@ -28,4 +34,4 @@ app.use("/api/v1/messages", messageRoutes);
 //error handler
 app.use(errorHandler);
 
-export { app };
+export { app, server, io };
