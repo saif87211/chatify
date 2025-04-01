@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import chatService from "../api/chat";
 import { setMessages, resetSelectedUser } from "../slices/chatSlice";
 import { ChatHeader, MessageSkeletion, MessageInput } from "./index";
-import useSocket from "../hooks/useSocket";
+import { useSocket } from "../context/SocketContext";
 
 const formatMessageTime = (date) => new Date(date).toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -19,7 +19,7 @@ export default function ChatContainer() {
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
     const selectedUser = useSelector(state => state.chatSlice.selectedUser);
     const messageEndRef = useRef(null);
-    const socket = useSocket(authUser?._id);
+    const socket = useSocket();
 
     useEffect(() => {
         const getMessages = async () => {
@@ -86,9 +86,8 @@ export default function ChatContainer() {
                             </time>
                         </div>
                         <div className="chat-bubble text-wrap flex flex-col">
-                            <p>{message._id}</p>
                             {message.image && (
-                                <img src={message.image} className="sm:max-w-[200px] rounded-md mb-2" alt="Attachment" />
+                                <img src={message.image} className="sm:max-w-[200px] block rounded-md mb-2" alt="Attachment" />
                             )}
                             {message.text && <p>{message.text}</p>}
                         </div>
