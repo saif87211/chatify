@@ -11,9 +11,8 @@ export default function SocketProvider({ children }) {
 
     useEffect(() => {
         const newSocket = getSocket(authUser._id)
-        console.log("newSockt: ", newSocket);
+
         newSocket.on("getOnlineUsers", (userIds) => {
-            console.log("userIds: ", userIds);
             dispatch(setOnlineUsers(userIds));
         });
         setSocket(newSocket);

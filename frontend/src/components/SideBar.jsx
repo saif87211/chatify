@@ -51,14 +51,19 @@ export default function SideBar() {
                             <input type="checkbox" checked={showOnlineOnly} onChange={handleCheckBox} className="checkbox checkbox-sm" />
                             <span className="text-sm">Show online only</span>
                             {/* Online users */}
-                            <span className="text-xs text-zinc-500">{onlineUsers?.length} Online</span>
+                            <span className="text-xs text-zinc-500">{onlineUsers?.length - 1} Online</span>
                         </label>
                     </div>
                 </div>
 
                 <div className="overflow-y-auto w-full py-3">
                     {filteredUsers.map((user) => (
-                        <button key={user._id} onClick={() => dispatch(setSlectedUser(user))} className={`w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}>
+                        <button key={user._id}
+                            onClick={() => {
+                                if (user._id !== selectedUser?._id)
+                                    dispatch(setSlectedUser(user));
+                            }}
+                            className={`w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}>
                             <div className="relative lg:mx-0">
                                 {/* profile image */}
                                 <img className="size-12 object-cover rounded-full" src={user.profilephoto || "./user.png"} alt={user.fullname} />

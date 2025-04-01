@@ -18,10 +18,7 @@ const chatSlice = createSlice({
             state.selectedUser = action.payload;
         },
         setMessages: (state, action) => {
-            console.log("action.payload: ", action.payload);
             state.messages = [...state.messages, ...action.payload];
-            console.log(state.messages, " :state.messages");
-            console.log(state.messages.length, " :state.messages.length");
         },
         resetSelectedUser: (state, action) => {
             state.selectedUser = null;

@@ -42,7 +42,6 @@ export default function ChatContainer() {
     useEffect(() => {
         if (socket) {
             socket.on("newMessage", (newMessage) => {
-                console.log("newMessage:", newMessage)
                 const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
 
                 if (!isMessageSentFromSelectedUser) return;

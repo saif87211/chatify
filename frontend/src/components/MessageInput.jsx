@@ -20,7 +20,7 @@ export default function MessageInput() {
             toast.error("Please select an image file");
             return;
         }
-        console.log(file);
+
         const reader = new FileReader();
         reader.onloadend = () => {
             setImagePreview(reader.result);

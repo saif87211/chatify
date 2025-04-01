@@ -146,9 +146,8 @@ const updateUserAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserProfileImage = asyncHandler(async (req, res) => {
-    console.log(req);
     const imageLocalPath = req.file?.path;
-    console.log(imageLocalPath);
+
     if (!imageLocalPath) {
         throw new ApiError(400, "Profile picture is missing.");
     }
