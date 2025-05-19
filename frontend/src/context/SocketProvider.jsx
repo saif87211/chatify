@@ -10,12 +10,14 @@ export default function SocketProvider({ children }) {
     const authUser = useSelector(state => state.authSlice.authUserData);
 
     useEffect(() => {
-        const newSocket = getSocket(authUser._id)
+        if (authUser) {
+            const newSocket = getSocket(authUser._id)
 
-        newSocket.on("getOnlineUsers", (userIds) => {
-            dispatch(setOnlineUsers(userIds));
-        });
-        setSocket(newSocket);
+            newSocket.on("getOnlineUsers", (userIds) => {
+                dispatch(setOnlineUsers(userIds));
+            });
+            setSocket(newSocket);
+        }
     }, []);
 
     return (
