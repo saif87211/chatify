@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { setUsers, setSlectedUser } from "../slices/chatSlice";
 import toast from "react-hot-toast";
-import { SideBarSkeletion } from "./index";
+import { SideBarSkeletion,GroupCreateModel } from "./index";
 import chatService from "../api/chat";
 
 export default function SideBar() {
@@ -41,10 +41,20 @@ export default function SideBar() {
         : (
             <aside className={`h-full sm:w-72 ${selectedUser ? "hidden" : "w-full"} border-r border-base-300 sm:flex flex-col transation-all duration-200`}>
                 <div className="border-b border-base-300 w-full p-5">
-                    <div className="flex items-center gap-2">
-                        <Users className="size-6" />
-                        <span className={`font-medium block`}>Contacts</span>
+                    <div className="flex justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                            <Users className="size-6" />
+                            <span className={`font-medium block`}>Contacts</span>
+                        </div>
+                        <div className="dropdown dropdown-end">
+                            <div tabIndex={0} role="button" className="btn m-1 rounded bg-base-100 hover:bg-base-200">New +</div>
+                            <ul tabIndex={0} className="dropdown-content border border-base-300 menu bg-base-100 z-1 w-36 p-2 m-0 shadow-sm">
+                                <li><a>New chat</a></li>
+                                <li><a onClick={() => document.getElementById('createGroupModel').showModal()}>Create Group</a></li>
+                            </ul>
+                        </div>
                     </div>
+                    <GroupCreateModel />
                     {/* TODO:filter online only */}
                     <div className="mt-3 flex items-center gap-2">
                         <label className="cursor-pointer flex items-center gap-2">

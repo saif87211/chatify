@@ -9,5 +9,7 @@ import ChatHeader from "./ChatHeader";
 import SideBarSkeletion from "./skeletions/SideBarSkeletion";
 import MessageSkeletion from "./skeletions/MessageSkeletion";
 import MessageInput from "./MessageInput";
+import GroupCreateModel from "./GroupCreateModel";
+import ConfirmGroupCreateModel from "./ConfirmGroupCreateModel";
 
-export { AuthLayout, Register, Navbar, Login, ChatContainer, NoChatSelected, SideBar, ChatHeader, SideBarSkeletion, MessageSkeletion, MessageInput };
+export { AuthLayout, Register, Navbar, Login, ChatContainer, NoChatSelected, SideBar, ChatHeader, SideBarSkeletion, MessageSkeletion, MessageInput, GroupCreateModel, ConfirmGroupCreateModel };

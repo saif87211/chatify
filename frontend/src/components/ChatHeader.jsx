@@ -13,7 +13,7 @@ export default function ChatHeader() {
                     {/* Profile */}
                     <div className="avatar">
                         <div className="size-10 rounded-full relative">
-                            <img src={selectedUser.profilePic || "./user.png"} alt={selectedUser.username || "user profile"} />
+                            <img src={selectedUser.profilephoto || "./user.png"} alt={selectedUser.username || "user profile"} />
                         </div>
                     </div>
                     {/* user info */}
