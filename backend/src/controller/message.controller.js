@@ -8,9 +8,9 @@ import { io } from "../app.js";
 import { getReceiverSocketId } from "../socket.js";
 
 const getUsersForSideBar = asyncHandler(async (req, res) => {
-    const userId = req.user?._id;
-
-    const users = await User.find({ _id: { $ne: userId } }).select("-password");
+    const currentUserId = req.user?._id;
+    //get all the user except current user
+    const users = await User.find({ _id: { $ne: currentUserId } }).select("-password");
 
     return res.status(200).json(new ApiResponse(200, { users }, "Users fetched successfully."))
 });
@@ -41,7 +41,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     const text = req.body.text;
     const imageLocalPath = req.file?.path;
 
-    const receiverId = req.params.id;
+    const { receiverId, groupId } = req.body;
     const senderId = req.user._id;
 
     let cloudinaryResponse;
@@ -51,7 +51,8 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     const newMessage = await Message.create({
         senderId,
-        receiverId,
+        receiverId: receiverId ? receiverId : null,
+        groupId: groupId ? groupId : null,
         text,
         image: cloudinaryResponse?.url,
     });
