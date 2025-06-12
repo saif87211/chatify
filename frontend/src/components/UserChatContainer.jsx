@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import chatService from "../api/chat";
-import { setMessages, resetSelectedUser } from "../slices/chatSlice";
+import { setMessages, resetSelectedUserOrGroup } from "../slices/chatSlice";
 import { ChatHeader, MessageSkeletion, MessageInput } from "./index";
 import { useSocket } from "../context/SocketContext";
 
@@ -12,12 +12,12 @@ const formatMessageTime = (date) => new Date(date).toLocaleTimeString("en-US", {
     hour12: false,
 });
 
-export default function ChatContainer() {
+export default function UserChatContainer() {
     const dispatch = useDispatch();
     const messages = useSelector(state => state.chatSlice.messages);
     const authUser = useSelector(state => state.authSlice.authUserData);
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
-    const selectedUser = useSelector(state => state.chatSlice.selectedUser);
+    const selectedUser = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const messageEndRef = useRef(null);
     const socket = useSocket();
 
@@ -31,7 +31,7 @@ export default function ChatContainer() {
                 }
             } catch (error) {
                 toast.error("can't load the user messages");
-                dispatch(resetSelectedUser());
+                dispatch(resetSelectedUserOrGroup());
             } finally {
                 setIsMessagesLoading(false);
             }
@@ -76,7 +76,7 @@ export default function ChatContainer() {
                     <div key={message._id} className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`} ref={messageEndRef}>
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">
-                                <img className="" src={message.senderId === authUser._id ? authUser.profilephoto || "./user.png" : selectedUser.profilephoto || "./user.png"} alt="profile pic" />
+                                <img className="" src={message.senderId === authUser._id ? authUser?.profilephoto || "./user.png" : selectedUser.profilephoto || "./user.png"} alt="profile pic" />
                             </div>
                         </div>
                         <div className="chat-header mb-1">

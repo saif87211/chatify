@@ -2,34 +2,34 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     messages: [],
-    users: [],
-    selectedUser: null,
+    usersAndGroups: [],
+    selectedUserOrGroup: null,
 };
 
 const chatSlice = createSlice({
     name: "chatSlice",
     initialState,
     reducers: {
-        setUsers: (state, action) => {
-            state.users = action.payload;
+        setUsersAndGroups: (state, action) => {
+            state.usersAndGroups = action.payload;
         },
-        setSlectedUser: (state, action) => {
+        setSlectedUserOrGroup: (state, action) => {
             state.messages = [];
-            state.selectedUser = action.payload;
+            state.selectedUserOrGroup = action.payload;
         },
         setMessages: (state, action) => {
             state.messages = [...state.messages, ...action.payload];
         },
-        resetSelectedUser: (state, action) => {
-            state.selectedUser = null;
+        resetSelectedUserOrGroup: (state, action) => {
+            state.selectedUserOrGroup = null;
             state.messages = [];
             if (action.payload === "logout") {
-                state.users = [];
+                state.usersAndGroups = [];
             }
         }
     }
 });
 
-export const { setUsers, setSlectedUser, setMessages, resetSelectedUser } = chatSlice.actions;
+export const { setUsersAndGroups, setSlectedUserOrGroup, setMessages, resetSelectedUserOrGroup } = chatSlice.actions;
 
 export default chatSlice.reducer;

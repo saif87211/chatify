@@ -6,13 +6,23 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadFileOnCloudinary } from "../utils/cloudinary.js";
 import { io } from "../app.js";
 import { getReceiverSocketId } from "../socket.js";
+import { Group } from "../models/group.model.js";
 
-const getUsersForSideBar = asyncHandler(async (req, res) => {
+const getUsersAndGroupsForSideBar = asyncHandler(async (req, res) => {
     const currentUserId = req.user?._id;
     //get all the user except current user
     const users = await User.find({ _id: { $ne: currentUserId } }).select("-password");
+    const groups = await Group.find({
+        $or: [
+            { admin: currentUserId },
+            {
+                members: {
+                    $in: [currentUserId]
+                }
+            }]
+    });
 
-    return res.status(200).json(new ApiResponse(200, { users }, "Users fetched successfully."))
+    return res.status(200).json(new ApiResponse(200, [...users, ...groups], "Users fetched successfully."))
 });
 
 const getMessages = asyncHandler(async (req, res) => {
@@ -51,8 +61,8 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     const newMessage = await Message.create({
         senderId,
-        receiverId: receiverId ? receiverId : null,
-        groupId: groupId ? groupId : null,
+        receiverId,
+        groupId,
         text,
         image: cloudinaryResponse?.url,
     });
@@ -67,4 +77,4 @@ const sendMessage = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, { newMessage }));
 });
 
-export { getUsersForSideBar, getMessages, sendMessage };
+export { getUsersAndGroupsForSideBar, getMessages, sendMessage };

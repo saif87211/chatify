@@ -18,6 +18,11 @@ export default function SocketProvider({ children }) {
             });
             setSocket(newSocket);
         }
+        return () => {
+            console.log("Unload")
+            socket?.disconnect();
+            setSocket(null);
+        }
     }, []);
 
     return (

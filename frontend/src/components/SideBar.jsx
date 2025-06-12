@@ -1,14 +1,14 @@
 import { Users } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { setUsers, setSlectedUser } from "../slices/chatSlice";
+import { setUsersAndGroups, setSlectedUserOrGroup } from "../slices/chatSlice";
 import toast from "react-hot-toast";
-import { SideBarSkeletion,GroupCreateModel } from "./index";
+import { SideBarSkeletion, GroupCreateModel } from "./index";
 import chatService from "../api/chat";
 
 export default function SideBar() {
-    const users = useSelector(state => state.chatSlice.users);
-    const selectedUser = useSelector(state => state.chatSlice.selectedUser);
+    const usersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
+    const selectedUser = useSelector(state => state.chatSlice.selectedUserAndGroup);
     const [userLoading, setUserLoading] = useState(true);
     const dispatch = useDispatch();
     const authStatus = useSelector(state => state.authSlice.authStatus);
@@ -18,10 +18,10 @@ export default function SideBar() {
     useEffect(() => {
         const getUsers = async () => {
             try {
-                const response = await chatService.getSideBarUsers();
-                const newUsers = response.data?.users;
-                if (newUsers) {
-                    dispatch(setUsers(newUsers));
+                const response = await chatService.getSideBarUsersAndGroups();
+                const newUsersAndGroups = response.data;
+                if (newUsersAndGroups) {
+                    dispatch(setUsersAndGroups(newUsersAndGroups));
                     setUserLoading(false);
                 }
             } catch (error) {
@@ -32,7 +32,7 @@ export default function SideBar() {
             getUsers();
     }, []);
 
-    const filteredUsers = showOnlineOnly ? users.filter(user => onlineUsers.includes(user._id)) : users;
+    const filteredUsersAndGroups = showOnlineOnly ? usersAndGroups.filter(user => onlineUsers.includes(user._id)) : usersAndGroups;
 
     const handleCheckBox = (e) => { setShowOnlineOnly(e.target.checked) };
 
@@ -67,32 +67,32 @@ export default function SideBar() {
                 </div>
 
                 <div className="overflow-y-auto w-full py-3">
-                    {filteredUsers.map((user) => (
-                        <button key={user._id}
+                    {filteredUsersAndGroups.map((userOrGroup) => (
+                        <button key={userOrGroup._id}
                             onClick={() => {
-                                if (user._id !== selectedUser?._id)
-                                    dispatch(setSlectedUser(user));
+                                if (userOrGroup._id !== selectedUser?._id)
+                                    dispatch(setSlectedUserOrGroup(userOrGroup));
                             }}
-                            className={`w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}>
+                            className={`w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors ${selectedUser?._id === userOrGroup._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}>
                             <div className="relative lg:mx-0">
                                 {/* profile image */}
-                                <img className="size-12 object-cover rounded-full" src={user.profilephoto || "./user.png"} alt={user.fullname} />
-                                {onlineUsers.includes(user._id) && (
+                                <img className="size-12 object-cover rounded-full" src={userOrGroup.profilephoto || "./user.png"} alt={userOrGroup.fullname} />
+                                {onlineUsers.includes(userOrGroup._id) && (
                                     <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900"></span>
                                 )}
                                 {/* online users is included */}
                             </div>
                             {/* user info*/}
                             <div className={`${selectedUser ? "hidden" : ""} sm:block text-left min-w-0`}>
-                                <div className="font-medium truncate">{user.fullname}</div>
+                                <div className="font-medium truncate">{userOrGroup.fullname ? userOrGroup.fullname : userOrGroup.name}</div>
                                 <div className="text-sm text-zinc-400">
-                                    {onlineUsers.includes(user._id) ? "Online" : "offline"}
+                                    {userOrGroup.members ? "Group" : (onlineUsers.includes(userOrGroup._id) ? "Online" : "offline")}
                                 </div>
                             </div>
                         </button>
                     ))}
 
-                    {filteredUsers.length === 0 && (
+                    {filteredUsersAndGroups.length === 0 && (
                         <div className="text-center text-zinc-500 py-4">No online users</div>
                     )}
                 </div>

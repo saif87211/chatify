@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../slices/authSlice";
 import auth from "../api/auth";
-import { resetSelectedUser } from "../slices/chatSlice";
+import { resetSelectedUserOrGroup } from "../slices/chatSlice";
 
 export default function Navbar() {
     const authStatus = useSelector(state => state.authSlice.authStatus);
@@ -14,7 +14,7 @@ export default function Navbar() {
     const handleLogout = async () => {
         const response = await auth.logout();
         dispatch(logout());
-        dispatch(resetSelectedUser())
+        dispatch(resetSelectedUserOrGroup())
         navigate("/login");
     };
     return (

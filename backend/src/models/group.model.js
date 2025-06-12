@@ -14,6 +14,9 @@ const groupSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         requierd: true
+    },
+    profilephoto: {
+        type: String
     }
 }, { timestamps: true });
 

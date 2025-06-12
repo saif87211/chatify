@@ -4,9 +4,9 @@ import { createGroup, getGroupMessages, addUserInGroup, sendMessageToGroup } fro
 
 const router = Router();
 
-router.route("/").post(verifyJwt, createGroup);
+router.route("/create-group").post(verifyJwt, createGroup);
 
-router.route("/messages/:id").get(verifyJwt, getGroupMessages);
+router.route("/group-messages/:id").get(verifyJwt, getGroupMessages);
 
 // router.route("/send/:id").post(verifyJwt, sendMessageToGroup);
 

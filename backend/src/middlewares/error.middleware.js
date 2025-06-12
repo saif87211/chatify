@@ -7,6 +7,7 @@ const errorHandler = (err, req, res, next) => {
         const message = error.message || "Something went wrong";
         error = new ApiError(statuscode, message, error?.errors || [], err.stack);
     }
+    console.log(err);
     return res.status(error.statuscode).json({ ...error, message: error.message });
 };
 

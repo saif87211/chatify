@@ -10,7 +10,7 @@ export default function MessageInput() {
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const fileInputRef = useRef(null);
-    const selectedUser = useSelector(state => state.chatSlice.selectedUser);
+    const selectedUserOrGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const messages = useSelector(state => state.chatSlice.messages);
     const disptach = useDispatch();
 
@@ -41,7 +41,7 @@ export default function MessageInput() {
         if (!text.trim() && !imagePreview) return;
 
         try {
-            const response = await chatService.sendMessage(selectedUser._id, text.trim(), selectedImage);
+            const response = await chatService.sendMessage(selectedUserOrGroup._id, text.trim(), selectedImage);
             const newMessage = response?.data.newMessage;
             if (newMessage) {
                 disptach(setMessages([newMessage]));

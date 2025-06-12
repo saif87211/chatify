@@ -1,10 +1,32 @@
 import { Camera, Check, Undo2 } from "lucide-react";
 import { truncateText } from "../utils/helper";
+import chatService from "../api/chat";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { setUsersAndGroups } from "../slices/chatSlice";
 
-export default function ConfirmGroupCreateModel({ selectedGroupUsers }) {
+export default function ConfirmGroupCreateModel({ selectedGroupUsers, setSelectedGroupUsers }) {
+    const [groupName, setGroupName] = useState("");
+    const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
+    const dispatch = useDispatch();
 
-    const handleCreateGroup = () => {
-        console.log("Handle Create Group: ", selectedGroupUsers);
+    const handleGroupNameChange = (e) => setGroupName(e.target.value);
+
+    const handleCreateGroup = async (e) => {
+        try {
+            const membersIds = selectedGroupUsers.map(user => user._id);
+
+            const response = await chatService.createGroup(groupName, membersIds);
+            toast.success(response.message);
+            //updateSidebar
+            dispatch(setUsersAndGroups([...sideBarUsersAndGroups, response.data.group]));
+        } catch (error) {
+            toast.error(error.response?.data.message || "Something went wrong. Try agian later.");
+        } finally {
+            setSelectedGroupUsers([]);
+            setGroupName("");
+        }
     };
 
     return (
@@ -25,7 +47,7 @@ export default function ConfirmGroupCreateModel({ selectedGroupUsers }) {
                             </label>
                         </div>
                         {/* GROUP NAME */}
-                        <input type="text" placeholder="Group Name" className="input input-bordered w-full" />
+                        <input type="text" placeholder="Group Name" className="input input-bordered w-full" value={groupName} onChange={handleGroupNameChange} />
                     </div>
                 </div>
 
@@ -43,7 +65,8 @@ export default function ConfirmGroupCreateModel({ selectedGroupUsers }) {
                     <form method="dialog" className="flex gap-2">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="btn btn-outline" onClick={() => document.getElementById('createGroupModel').showModal()}>Cancel<Undo2 /></button>
-                        <button className="btn btn-outline" onClick={handleCreateGroup} >Create Group<Check className="font-bold" /></button>
+
+                        <button className={`btn btn-outline ${!groupName.trim() ? "btn-disabled cursor-not-allowed" : ""}`} onClick={handleCreateGroup}>Create Group<Check className="font-bold" /></button>
                     </form>
                 </div>
             </div>

@@ -1,9 +1,17 @@
 import { useSelector } from "react-redux";
-import { NoChatSelected, ChatContainer, SideBar } from "../components";
+import { NoChatSelected, UserChatContainer, SideBar } from "../components";
 import SocketProvider from "../context/SocketProvider";
 
 function App() {
-  const selectedUser = useSelector(state => state.chatSlice.selectedUser);
+  const selectedUserOrGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
+  let component;
+
+  if (selectedUserOrGroup?.members)
+    component = <>Group Container</>;
+  else if (selectedUserOrGroup)
+    component = <UserChatContainer />;
+  else
+    component = <NoChatSelected />;
 
   return (
     <SocketProvider>
@@ -12,7 +20,7 @@ function App() {
           <div className="bg-base-100 rounded-lg shadow-cl w-full max-w-6xl h-[calc(100vh-8rem)]">
             <div className="flex h-full rounded-lg overflow-hidden">
               <SideBar />
-              {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
+              {component}
             </div>
           </div>
         </div>

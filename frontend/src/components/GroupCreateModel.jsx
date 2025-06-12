@@ -1,15 +1,27 @@
 import { Search, CircleCheck, X, ArrowBigRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ConfirmGroupCreateModel } from "./";
 import { truncateText } from "../utils/helper";
 
 export default function GroupCreateModel() {
-    const sideBarUsers = useSelector(state => state.chatSlice.users);
+    const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
+    const sideBarUsers = sideBarUsersAndGroups.filter(userOrGroup => userOrGroup.email);
+
     const authUser = useSelector(state => state.authSlice.authUserData);
     const [selectedGroupUsers, setSelectedGroupUsers] = useState([]);
 
     const isUserSelectedForGroup = (user) => selectedGroupUsers.find(selectedGroupUser => selectedGroupUser._id === user._id);
+
+    const [filterUsers, setFilterdUsers] = useState([]);
+
+
+    useEffect(() => {
+        setFilterdUsers(sideBarUsers);
+    }, [])
+    const handleSearch = (e) => {
+        setFilterdUsers(sideBarUsers.filter(user => user.fullname.toLowerCase().includes(e.target.value?.toLowerCase())));
+    }
 
     return (
         <>
@@ -25,18 +37,18 @@ export default function GroupCreateModel() {
                             {/* <X className="size-2" /> */}
                         </button>
                         {selectedGroupUsers && selectedGroupUsers.map(selectedUser => (
-                            <button key={selectedUser._id} className="btn btn-sm" onClick={() => {
-                                setSelectedGroupUsers(prevUsers => prevUsers.filter((user) => user._id !== selectedUser._id));
+                            <button key={selectedUser?._id} className="btn btn-sm" onClick={() => {
+                                setSelectedGroupUsers(prevUsers => prevUsers.filter((user) => user._id !== selectedUser?._id));
                             }}>
-                                <img className="size-5 rounded-full" src={selectedUser.profilephoto || "./user.png"} alt={selectedUser.fullname} />
-                                <p>{truncateText(selectedUser.fullname, 8)}</p>
+                                <img className="size-5 rounded-full" src={selectedUser?.profilephoto || "./user.png"} alt={selectedUser?.fullname} />
+                                <p>{truncateText(selectedUser?.fullname, 8)}</p>
                                 <X className="size-3" strokeWidth={4} />
                             </button>
                         ))}
                     </div>
 
                     <label className="input input-bordered flex items-center gap-2">
-                        <input type="text" className="grow" placeholder="Search" />
+                        <input type="text" className="grow" placeholder="Search" onChange={handleSearch} />
                         <Search />
                     </label>
 
@@ -44,25 +56,25 @@ export default function GroupCreateModel() {
                         <div className="overflow-y-auto w-full h-72 my-1 border border-base-300 rounded-lg">
                             {/* CONTACTS */}
                             {
-                                sideBarUsers && sideBarUsers.map(sideBarUser => (
-                                    <button key={sideBarUser._id} className="w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors" onClick={() => {
-                                        if (!isUserSelectedForGroup(sideBarUser)) {
-                                            setSelectedGroupUsers(prevUsers => [...prevUsers, sideBarUser]);
+                                filterUsers && filterUsers.map(user => (
+                                    <button key={user._id} className="w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors" onClick={() => {
+                                        if (!isUserSelectedForGroup(user)) {
+                                            setSelectedGroupUsers(prevUsers => [...prevUsers, user]);
                                         } else {
-                                            setSelectedGroupUsers(prevUsers => prevUsers.filter((user) => user._id !== sideBarUser._id));
+                                            setSelectedGroupUsers(prevUsers => prevUsers.filter((user) => user._id !== user._id));
                                         }
                                     }}>
                                         <div className="relative lg:mx-0 indicator">
                                             {
-                                                isUserSelectedForGroup(sideBarUser) ? (
+                                                isUserSelectedForGroup(user) ? (
                                                     <span className="indicator-item indicator-bottom">
                                                         <CircleCheck color="#28e41b" />
                                                     </span>) : ("")
                                             }
-                                            <img className="size-9 rounded-full" src={sideBarUser.profilephoto || "./user.png"} alt={sideBarUser.fullname || "profile photo"} />
+                                            <img className="size-9 rounded-full" src={user.profilephoto || "./user.png"} alt={user.fullname || "profile photo"} />
                                         </div>
                                         <div className="sm:block text-left min-w-0">
-                                            <div className="font-medium truncate">{sideBarUser.fullname}</div>
+                                            <div className="font-medium truncate">{user.fullname}</div>
                                         </div>
                                     </button>
                                 ))
@@ -84,7 +96,7 @@ export default function GroupCreateModel() {
                     </div>
                 </div>
             </dialog>
-            <ConfirmGroupCreateModel selectedGroupUsers={selectedGroupUsers} />
+            <ConfirmGroupCreateModel selectedGroupUsers={selectedGroupUsers} setSelectedGroupUsers={setSelectedGroupUsers} />
         </>
     )
 }

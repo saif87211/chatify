@@ -26,10 +26,11 @@ app.use(morgan("dev"));
 //routes
 import userRoutes from "./routes/user.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import groupRoutes from "./routes/group.routes.js";
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/messages", messageRoutes);
-
+app.use("/api/v1/groups", groupRoutes);
 
 //error handler
 app.use(errorHandler);

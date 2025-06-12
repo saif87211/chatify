@@ -6,22 +6,20 @@ import { Group } from "../models/group.model.js";
 import { User } from "../models/user.model.js";
 
 const createGroup = asyncHandler(async (req, res) => {
-    const groupName = req.body.groupName?.trim();
+    const groupname = req.body.groupname?.trim();
     const members = req.body.members;
     const admin = req.user._id;
 
-    if (!groupName && !members.length) {
+    if (!groupname && !members.length) {
         throw new ApiError(500, "Group name or members is required.");
     }
-
-    const group = await Group.create({ name: groupName, members, admin });
+    const group = await Group.create({ name: groupname, members, admin });
 
     if (!group) {
         throw new ApiError(500, "Something went wrong while creating group.");
     }
 
     return res.status(201).json(new ApiResponse(201, { group }, "Group Created Succefully."));
-
 });
 
 

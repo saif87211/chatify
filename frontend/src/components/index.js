@@ -2,7 +2,7 @@ import AuthLayout from "./AuthLayout";
 import Register from "./Register";
 import Navbar from "./Navbar";
 import Login from "./Login";
-import ChatContainer from "./ChatContainer";
+import UserChatContainer from "./UserChatContainer";
 import NoChatSelected from "./NoChatSelected";
 import SideBar from "./SideBar";
 import ChatHeader from "./ChatHeader";
@@ -12,4 +12,4 @@ import MessageInput from "./MessageInput";
 import GroupCreateModel from "./GroupCreateModel";
 import ConfirmGroupCreateModel from "./ConfirmGroupCreateModel";
 
-export { AuthLayout, Register, Navbar, Login, ChatContainer, NoChatSelected, SideBar, ChatHeader, SideBarSkeletion, MessageSkeletion, MessageInput, GroupCreateModel, ConfirmGroupCreateModel };
+export { AuthLayout, Register, Navbar, Login, UserChatContainer, NoChatSelected, SideBar, ChatHeader, SideBarSkeletion, MessageSkeletion, MessageInput, GroupCreateModel, ConfirmGroupCreateModel };

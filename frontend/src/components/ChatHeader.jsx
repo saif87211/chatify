@@ -1,9 +1,9 @@
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { resetSelectedUser } from "../slices/chatSlice";
+import { resetSelectedUserOrGroup } from "../slices/chatSlice";
 
 export default function ChatHeader() {
-    const selectedUser = useSelector(state => state.chatSlice.selectedUser);
+    const selectedUserOrGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const dispatch = useDispatch();
 
     return (
@@ -13,17 +13,17 @@ export default function ChatHeader() {
                     {/* Profile */}
                     <div className="avatar">
                         <div className="size-10 rounded-full relative">
-                            <img src={selectedUser.profilephoto || "./user.png"} alt={selectedUser.username || "user profile"} />
+                            <img src={selectedUserOrGroup?.profilephoto || "./user.png"} alt={selectedUserOrGroup?.username || "user profile"} />
                         </div>
                     </div>
                     {/* user info */}
                     <div>
-                        <h3 className="font-medium">{selectedUser.fullname}</h3>
+                        <h3 className="font-medium">{selectedUserOrGroup.fullname}</h3>
                         <p className="text-sm text-base-content/70">Offline</p>
                     </div>
                 </div>
                 {/* Close button */}
-                <button onClick={() => { dispatch(resetSelectedUser()) }}>
+                <button onClick={() => { dispatch(resetSelectedUserOrGroup()) }}>
                     <X />
                 </button>
             </div>
