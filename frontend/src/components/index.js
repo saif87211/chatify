@@ -11,5 +11,12 @@ import MessageSkeletion from "./skeletions/MessageSkeletion";
 import MessageInput from "./MessageInput";
 import GroupCreateModel from "./GroupCreateModel";
 import ConfirmGroupCreateModel from "./ConfirmGroupCreateModel";
+import GroupChatContainer from "./GroupChatContainer";
 
-export { AuthLayout, Register, Navbar, Login, UserChatContainer, NoChatSelected, SideBar, ChatHeader, SideBarSkeletion, MessageSkeletion, MessageInput, GroupCreateModel, ConfirmGroupCreateModel };
+export {
+    AuthLayout, Register, Navbar,
+    Login, UserChatContainer, NoChatSelected,
+    SideBar, ChatHeader, SideBarSkeletion,
+    MessageSkeletion, MessageInput, GroupCreateModel,
+    ConfirmGroupCreateModel, GroupChatContainer
+};

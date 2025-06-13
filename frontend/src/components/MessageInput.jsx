@@ -41,7 +41,13 @@ export default function MessageInput() {
         if (!text.trim() && !imagePreview) return;
 
         try {
-            const response = await chatService.sendMessage(selectedUserOrGroup._id, text.trim(), selectedImage);
+            let response;
+            if (selectedUserOrGroup.members)
+
+                response = await chatService.sendMessageToGroup(selectedUserOrGroup._id, text.trim(), selectedImage);
+            else
+                response = await chatService.sendMessage(selectedUserOrGroup._id, text.trim(), selectedImage);
+            
             const newMessage = response?.data.newMessage;
             if (newMessage) {
                 disptach(setMessages([newMessage]));

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { NoChatSelected, UserChatContainer, SideBar } from "../components";
+import { NoChatSelected, UserChatContainer, SideBar, GroupChatContainer } from "../components";
 import SocketProvider from "../context/SocketProvider";
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
   let component;
 
   if (selectedUserOrGroup?.members)
-    component = <>Group Container</>;
+    component = <GroupChatContainer />;
   else if (selectedUserOrGroup)
     component = <UserChatContainer />;
   else

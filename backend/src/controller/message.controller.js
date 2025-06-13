@@ -51,7 +51,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     const text = req.body.text;
     const imageLocalPath = req.file?.path;
 
-    const { receiverId, groupId } = req.body;
+    const receiverId = req.params.id;
     const senderId = req.user._id;
 
     let cloudinaryResponse;
@@ -62,7 +62,6 @@ const sendMessage = asyncHandler(async (req, res) => {
     const newMessage = await Message.create({
         senderId,
         receiverId,
-        groupId,
         text,
         image: cloudinaryResponse?.url,
     });

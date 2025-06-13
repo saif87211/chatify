@@ -18,7 +18,7 @@ export default function ChatHeader() {
                     </div>
                     {/* user info */}
                     <div>
-                        <h3 className="font-medium">{selectedUserOrGroup.fullname}</h3>
+                        <h3 className="font-medium">{selectedUserOrGroup.fullname || selectedUserOrGroup.name}</h3>
                         <p className="text-sm text-base-content/70">Offline</p>
                     </div>
                 </div>

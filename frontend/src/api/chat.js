@@ -17,16 +17,12 @@ class Chat {
             throw error;
         }
     }
-    async sendMessage(senderId, text, image = null, isSendToGroup = false) {
+    async sendMessage(senderId, text, image = null) {
         try {
             const formData = new FormData();
             formData.append("text", text);
             formData.append("image", image);
-            if (isSendToGroup)
-                formData.append("groupId", senderId);
-            else
-                formData.append("receiverId", senderId);
-            const response = await axiosInstance.post("/api/v1/messages/send", formData);
+            const response = await axiosInstance.post(`/api/v1/messages/send/${senderId}`, formData);
             return response.data;
         } catch (error) {
             throw error;
@@ -48,7 +44,17 @@ class Chat {
             throw error;
         }
     }
-
+    async sendMessageToGroup(groupId, text, image = null) {
+        try {
+            const formData = new FormData();
+            formData.append("text", text);
+            formData.append("image", image);
+            const response = await axiosInstance.post(`/api/v1/groups/send/${groupId}`, formData);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 const chat = new Chat();

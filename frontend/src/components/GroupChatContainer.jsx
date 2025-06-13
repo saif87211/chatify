@@ -7,12 +7,12 @@ import { ChatHeader, MessageSkeletion, MessageInput } from "./index";
 import { useSocket } from "../context/SocketContext";
 import { formatMessageTime } from "../utils/helper";
 
-export default function UserChatContainer() {
+export default function GroupChatContainer() {
     const dispatch = useDispatch();
     const messages = useSelector(state => state.chatSlice.messages);
     const authUser = useSelector(state => state.authSlice.authUserData);
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
-    const selectedUser = useSelector(state => state.chatSlice.selectedUserOrGroup);
+    const selectedGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const messageEndRef = useRef(null);
     const socket = useSocket();
 
@@ -20,9 +20,10 @@ export default function UserChatContainer() {
         const getMessages = async () => {
             setIsMessagesLoading(true);
             try {
-                const response = await chatService.getMessages(selectedUser._id);
+                const response = await chatService.getGroupMessages(selectedGroup._id);
                 if (response?.data.messages) {
                     dispatch(setMessages(response?.data.messages));
+                    console.log(response?.data.messages);
                 }
             } catch (error) {
                 toast.error("can't load the user messages");
@@ -32,12 +33,14 @@ export default function UserChatContainer() {
             }
         }
         getMessages();
-    }, [selectedUser, dispatch]);
+    }, [selectedGroup, dispatch]);
 
     useEffect(() => {
         if (socket) {
+            console.log(socket)
             socket.on("newMessage", (newMessage) => {
-                const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+                console.log(socket, " ", newMessage, selectedGroup);
+                const isMessageSentFromSelectedUser = newMessage.senderId._id === selectedGroup._id;
 
                 if (!isMessageSentFromSelectedUser) return;
 
@@ -49,7 +52,7 @@ export default function UserChatContainer() {
                 socket.off('newMessage');
             }
         };
-    }, [socket, selectedUser, dispatch]);
+    }, [socket, selectedGroup, dispatch]);
 
     useEffect(() => {
         if (messageEndRef.current) {
@@ -68,13 +71,14 @@ export default function UserChatContainer() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* messages */}
                 {messages && messages.map(message => (
-                    <div key={message._id} className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`} ref={messageEndRef}>
+                    <div key={message._id} className={`chat ${message.senderId._id === authUser._id ? "chat-end" : "chat-start"}`} ref={messageEndRef}>
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">
-                                <img className="" src={message.senderId === authUser._id ? authUser?.profilephoto || "./user.png" : selectedUser.profilephoto || "./user.png"} alt="profile pic" />
+                                <img className="" src={message.senderId._id === authUser._id ? authUser?.profilephoto || "./user.png" : selectedGroup.profilephoto || "./user.png"} alt="profile pic" />
                             </div>
                         </div>
                         <div className="chat-header mb-1">
+                            {message.senderId.fullname}
                             <time className="text-xs opacity-50 ml-1">
                                 {formatMessageTime(message.createdAt)}
                             </time>

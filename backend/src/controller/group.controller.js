@@ -2,8 +2,10 @@ import { Message } from "../models/message.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadFileOnCloudinary } from "../utils/cloudinary.js";
 import { Group } from "../models/group.model.js";
 import { User } from "../models/user.model.js";
+import { io } from "../app.js";
 
 const createGroup = asyncHandler(async (req, res) => {
     const groupname = req.body.groupname?.trim();
@@ -26,7 +28,7 @@ const createGroup = asyncHandler(async (req, res) => {
 const sendMessageToGroup = asyncHandler(async (req, res) => {
     const text = req.body.text;
     const imageLocalPath = req.file?.path;
-
+    
     const groupId = req.params.id;
     const senderId = req.user._id;
 
@@ -34,35 +36,34 @@ const sendMessageToGroup = asyncHandler(async (req, res) => {
     if (imageLocalPath) {
         cloudinaryResponse = await uploadFileOnCloudinary(imageLocalPath);
     }
-
     const newMessage = await Message.create({
         senderId,
         groupId,
         text,
         image: cloudinaryResponse?.url,
     });
-    console.log(receiverId, "receiverId");
+    
     //TODO: SOCKET implementation
-
+    
     if (groupId) {
         io.to(groupId).emit("newMessage", newMessage);
     }
+    
+    await newMessage.populate("senderId","fullname username email");
 
     return res.status(200).json(new ApiResponse(200, { newMessage }));
 });
 
 const getGroupMessages = asyncHandler(async (req, res) => {
-    const currentUserId = req.user._id;
     const groupId = req.params?.id;
 
     if (!groupId) {
         throw new ApiError(400, "Group user id required");
     }
 
-    const messages = await Message.find({
-        senderId: currentUserId,
-        groupId
-    });
+    const messages = await Message
+        .find({ groupId })
+        .populate("senderId","fullname username email");
 
     if (!messages) {
         throw new ApiError(500, "Internal server error");

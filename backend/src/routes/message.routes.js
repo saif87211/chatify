@@ -13,6 +13,6 @@ router.route("/users-and-groups").get(verifyJwt, getUsersAndGroupsForSideBar);
 
 router.route("/:id").get(verifyJwt, getMessages);
 
-router.route("/send").post(verifyJwt, upload.single("image"), sendMessage);
+router.route("/send/:id").post(verifyJwt, upload.single("image"), sendMessage);
 
 export default router;
