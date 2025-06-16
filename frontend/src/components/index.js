@@ -1,17 +1,17 @@
-import AuthLayout from "./AuthLayout";
-import Register from "./Register";
+import AuthLayout from "./layouts/AuthLayout";
+import Register from "./auth/Register";
 import Navbar from "./Navbar";
-import Login from "./Login";
-import UserChatContainer from "./UserChatContainer";
-import NoChatSelected from "./NoChatSelected";
+import Login from "./auth/Login";
+import UserChatContainer from "./containers/UserChatContainer";
+import NoChatSelected from "./layouts/NoChatSelected";
 import SideBar from "./SideBar";
 import ChatHeader from "./ChatHeader";
 import SideBarSkeletion from "./skeletions/SideBarSkeletion";
 import MessageSkeletion from "./skeletions/MessageSkeletion";
 import MessageInput from "./MessageInput";
-import GroupCreateModel from "./GroupCreateModel";
-import ConfirmGroupCreateModel from "./ConfirmGroupCreateModel";
-import GroupChatContainer from "./GroupChatContainer";
+import GroupCreateModel from "./modals/GroupCreateModel";
+import ConfirmGroupCreateModel from "./modals/ConfirmGroupCreateModel";
+import GroupChatContainer from "./containers/GroupChatContainer";
 
 export {
     AuthLayout, Register, Navbar,
