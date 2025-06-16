@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { User, AtSign, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { login } from "../slices/authSlice"
-import authService from "../api/auth";
+import { login } from "../../slices/authSlice"
+import authService from "../../api/auth";
 
 export default function Register() {
     const navigate = useNavigate();

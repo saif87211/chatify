@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Loader as LoaderIcon } from "lucide-react";
-import { login, logout } from "../slices/authSlice";
-import auth from "../api/auth";
+import { login, logout } from "../../slices/authSlice";
+import auth from "../../api/auth";
 import toast from "react-hot-toast";
 
 export default function AuthLayout({ children }) {

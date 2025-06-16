@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { toast } from "react-hot-toast";
-import auth from "../api/auth";
-import { login } from "../slices/authSlice";
+import auth from "../../api/auth";
+import { login } from "../../slices/authSlice";
 
 export default function Login() {
     const navigate = useNavigate();

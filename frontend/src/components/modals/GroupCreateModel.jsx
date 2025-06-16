@@ -1,8 +1,8 @@
 import { Search, CircleCheck, X, ArrowBigRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { ConfirmGroupCreateModel } from "./";
-import { truncateText } from "../utils/helper";
+import { ConfirmGroupCreateModel } from "../";
+import { truncateText } from "../../utils/helper";
 
 export default function GroupCreateModel() {
     const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);

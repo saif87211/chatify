@@ -1,10 +1,10 @@
 import { Camera, Check, Undo2 } from "lucide-react";
-import { truncateText } from "../utils/helper";
-import chatService from "../api/chat";
+import { truncateText } from "../../utils/helper";
+import chatService from "../../api/chat";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { setUsersAndGroups } from "../slices/chatSlice";
+import { setUsersAndGroups } from "../../slices/chatSlice";
 
 export default function ConfirmGroupCreateModel({ selectedGroupUsers, setSelectedGroupUsers }) {
     const [groupName, setGroupName] = useState("");

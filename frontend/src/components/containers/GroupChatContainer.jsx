@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState, useCallback } from "react";
 import toast from "react-hot-toast";
-import chatService from "../api/chat";
-import { setMessages, resetSelectedUserOrGroup } from "../slices/chatSlice";
-import { ChatHeader, MessageSkeletion, MessageInput } from "./index";
-import { useSocket } from "../context/SocketContext";
-import { formatMessageTime } from "../utils/helper";
+import chatService from "../../api/chat";
+import { setMessages, resetSelectedUserOrGroup } from "../../slices/chatSlice";
+import { ChatHeader, MessageSkeletion, MessageInput } from "../index";
+import { useSocket } from "../../context/SocketContext";
+import { formatMessageTime } from "../../utils/helper";
 
 export default function GroupChatContainer() {
     const dispatch = useDispatch();
