@@ -6,6 +6,7 @@ import { uploadFileOnCloudinary } from "../utils/cloudinary.js";
 import { Group } from "../models/group.model.js";
 import { User } from "../models/user.model.js";
 import { io } from "../app.js";
+import { getReceiverSocketId } from "../socket.js";
 
 const createGroup = asyncHandler(async (req, res) => {
     const groupname = req.body.groupname?.trim();
@@ -44,13 +45,11 @@ const sendMessageToGroup = asyncHandler(async (req, res) => {
     });
     
     //TODO: SOCKET implementation
-    
-    if (groupId) {
-        io.to(groupId).emit("newMessage", newMessage);
-    }
-    
+
     await newMessage.populate("senderId","fullname username email");
 
+    io.to(newMessage.groupId.toString()).emit("groupMessage", newMessage);
+    
     return res.status(200).json(new ApiResponse(200, { newMessage }));
 });
 

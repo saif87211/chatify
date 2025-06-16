@@ -30,6 +30,7 @@ export default function Register() {
             if (user) {
                 toast.success(registerResponse?.message || "Register succefully");
                 dispatch(login(user));
+                localStorage.setItem("token",registerResponse.data.token);
                 navigate("/");
             }
         } catch (error) {

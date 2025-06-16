@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import chatService from "../api/chat";
 import { setMessages, resetSelectedUserOrGroup } from "../slices/chatSlice";
@@ -15,6 +15,12 @@ export default function GroupChatContainer() {
     const selectedGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const messageEndRef = useRef(null);
     const socket = useSocket();
+
+    const handleGroupMessage = useCallback((newGroupMessage) => {
+        if (newGroupMessage.groupId === selectedGroup._id) {
+            dispatch(setMessages([...messages, newGroupMessage]))
+        }
+    }, [selectedGroup, messages, dispatch]);
 
     useEffect(() => {
         const getMessages = async () => {
@@ -37,19 +43,17 @@ export default function GroupChatContainer() {
 
     useEffect(() => {
         if (socket) {
-            console.log(socket)
-            socket.on("newMessage", (newMessage) => {
-                console.log(socket, " ", newMessage, selectedGroup);
-                const isMessageSentFromSelectedUser = newMessage.senderId._id === selectedGroup._id;
+            socket.emit("joinGroup", selectedGroup._id);
 
-                if (!isMessageSentFromSelectedUser) return;
-
-                dispatch(setMessages([newMessage]));
+            socket.on("groupMessage", (newMessage) => {
+                if (newMessage.senderId._id !== authUser._id)
+                    dispatch(setMessages([...messages, newMessage]));
             });
         }
         return () => {
             if (socket) {
-                socket.off('newMessage');
+                socket.emit('leaveGroupChat', selectedGroup._id);
+                socket.off("groupMessage");
             }
         };
     }, [socket, selectedGroup, dispatch]);

@@ -27,6 +27,7 @@ export default function Login() {
         try {
             const response = await auth.login(data);
             if (response.data?.loginUser) {
+                localStorage.setItem("token", response.data.token);
                 dispatch(login(response.data.loginUser));
             }
             navigate("/");

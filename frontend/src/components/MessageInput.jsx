@@ -43,7 +43,6 @@ export default function MessageInput() {
         try {
             let response;
             if (selectedUserOrGroup.members)
-
                 response = await chatService.sendMessageToGroup(selectedUserOrGroup._id, text.trim(), selectedImage);
             else
                 response = await chatService.sendMessage(selectedUserOrGroup._id, text.trim(), selectedImage);

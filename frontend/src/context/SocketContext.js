@@ -3,11 +3,11 @@ import socketio from "socket.io-client";
 import config from "../config/config";
 
 const getSocket = (userId) => {
+    const token = localStorage.getItem("token");
+    console.log(token);
     return socketio(config.server_url, {
         withCredentials: true,
-        query: {
-            userId
-        }
+        auth: { token },
     });
 };
 
