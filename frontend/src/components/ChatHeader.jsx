@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, CircleAlert } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetSelectedUserOrGroup } from "../slices/chatSlice";
 
@@ -22,10 +22,13 @@ export default function ChatHeader() {
                         <p className="text-sm text-base-content/70">Offline</p>
                     </div>
                 </div>
-                {/* Close button */}
-                <button onClick={() => { dispatch(resetSelectedUserOrGroup()) }}>
-                    <X />
-                </button>
+                <div className="flex items-center gap-x-10">
+                    <button className="btn btn-sm" onClick={() => document.getElementById("group-profile").showModal()}><CircleAlert size="18" />Group Info</button>
+                    {/* Close button */}
+                    <button onClick={() => { dispatch(resetSelectedUserOrGroup()) }}>
+                        <X />
+                    </button>
+                </div>
             </div>
         </div>
     );

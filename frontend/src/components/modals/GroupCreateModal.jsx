@@ -1,10 +1,10 @@
 import { Search, CircleCheck, X, ArrowBigRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { ConfirmGroupCreateModel } from "../";
+import { ConfirmGroupCreateModal } from "../";
 import { truncateText } from "../../utils/helper";
 
-export default function GroupCreateModel() {
+export default function GroupCreateModal() {
     const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
     const sideBarUsers = sideBarUsersAndGroups.filter(userOrGroup => userOrGroup.email);
 
@@ -79,7 +79,6 @@ export default function GroupCreateModel() {
                                     </button>
                                 ))
                             }
-
                         </div>
                     </div>
                     <form method="dialog">
@@ -96,7 +95,7 @@ export default function GroupCreateModel() {
                     </div>
                 </div>
             </dialog>
-            <ConfirmGroupCreateModel selectedGroupUsers={selectedGroupUsers} setSelectedGroupUsers={setSelectedGroupUsers} />
+            <ConfirmGroupCreateModal selectedGroupUsers={selectedGroupUsers} setSelectedGroupUsers={setSelectedGroupUsers} />
         </>
     )
 }

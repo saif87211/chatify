@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setUsersAndGroups } from "../../slices/chatSlice";
 
-export default function ConfirmGroupCreateModel({ selectedGroupUsers, setSelectedGroupUsers }) {
+export default function ConfirmGroupCreateModal({ selectedGroupUsers, setSelectedGroupUsers }) {
     const [groupName, setGroupName] = useState("");
     const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
     const dispatch = useDispatch();
