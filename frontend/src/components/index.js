@@ -7,16 +7,18 @@ import NoChatSelected from "./layouts/NoChatSelected";
 import SideBar from "./SideBar";
 import ChatHeader from "./ChatHeader";
 import SideBarSkeletion from "./skeletions/SideBarSkeletion";
+import GroupProfileModalSkeletion from "./skeletions/GroupProfileModalSkeletion";
 import MessageSkeletion from "./skeletions/MessageSkeletion";
 import MessageInput from "./MessageInput";
-import GroupCreateModel from "./modals/GroupCreateModel";
-import ConfirmGroupCreateModel from "./modals/ConfirmGroupCreateModel";
+import GroupCreateModal from "./modals/GroupCreateModal";
+import ConfirmGroupCreateModal from "./modals/ConfirmGroupCreateModal";
+import GroupProfileModal from "./modals/GroupProfileModal";
 import GroupChatContainer from "./containers/GroupChatContainer";
 
 export {
     AuthLayout, Register, Navbar,
     Login, UserChatContainer, NoChatSelected,
     SideBar, ChatHeader, SideBarSkeletion,
-    MessageSkeletion, MessageInput, GroupCreateModel,
-    ConfirmGroupCreateModel, GroupChatContainer
+    MessageSkeletion, MessageInput, GroupCreateModal,
+    ConfirmGroupCreateModal, GroupChatContainer, GroupProfileModal, GroupProfileModalSkeletion
 };

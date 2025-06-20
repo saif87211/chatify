@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import chatService from "../../api/chat";
 import { setMessages, resetSelectedUserOrGroup } from "../../slices/chatSlice";
-import { ChatHeader, MessageSkeletion, MessageInput } from "../index";
+import { ChatHeader, MessageSkeletion, MessageInput, GroupProfileModal } from "../index";
 import { useSocket } from "../../context/SocketContext";
 import { formatMessageTime } from "../../utils/helper";
 
@@ -97,6 +97,7 @@ export default function GroupChatContainer() {
                 ))}
             </div>
             <MessageInput />
+            <GroupProfileModal />
         </div>
         ));
 }

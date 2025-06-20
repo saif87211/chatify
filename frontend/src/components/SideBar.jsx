@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { setUsersAndGroups, setSlectedUserOrGroup } from "../slices/chatSlice";
 import toast from "react-hot-toast";
-import { SideBarSkeletion, GroupCreateModel } from "./index";
+import { SideBarSkeletion, GroupCreateModal } from "./index";
 import chatService from "../api/chat";
 
 export default function SideBar() {
     const usersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
-    const selectedUser = useSelector(state => state.chatSlice.selectedUserAndGroup);
+    const selectedUser = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const [userLoading, setUserLoading] = useState(true);
     const dispatch = useDispatch();
     const authStatus = useSelector(state => state.authSlice.authStatus);
@@ -31,7 +31,7 @@ export default function SideBar() {
         if (authStatus)
             getUsers();
     }, []);
-
+    console.log(selectedUser);
     const filteredUsersAndGroups = showOnlineOnly ? usersAndGroups.filter(user => onlineUsers.includes(user._id)) : usersAndGroups;
 
     const handleCheckBox = (e) => { setShowOnlineOnly(e.target.checked) };
@@ -39,7 +39,7 @@ export default function SideBar() {
     return (userLoading ?
         (<SideBarSkeletion />)
         : (
-            <aside className={`h-full sm:w-72 ${selectedUser ? "hidden" : "w-full"} border-r border-base-300 sm:flex flex-col transation-all duration-200`}>
+            <aside className={`h-full sm:w-72 sm:flex sm:flex-col ${selectedUser ? "hidden" : "w-full flex flex-col"} border-r border-base-300 duration-200`}>
                 <div className="border-b border-base-300 w-full p-5">
                     <div className="flex justify-between gap-2">
                         <div className="flex items-center gap-2">
@@ -54,7 +54,7 @@ export default function SideBar() {
                             </ul>
                         </div>
                     </div>
-                    <GroupCreateModel />
+                    <GroupCreateModal />
                     {/* TODO:filter online only */}
                     <div className="mt-3 flex items-center gap-2">
                         <label className="cursor-pointer flex items-center gap-2">
