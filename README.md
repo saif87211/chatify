@@ -1,4 +1,4 @@
-# Chatify (e.g., My Awesome Chat App)
+# Chatify
 
 A real-time chat application with individual and group messaging features.
 
