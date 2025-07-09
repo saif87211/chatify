@@ -61,7 +61,7 @@ npm i
 ```
 ### Configuration
 
-1.  Create a `.env` file in the `backend` directory and add the following environment variables:
+1.  Create a `.env` file in the `backend/src` directory and add the following environment variables:
 ```
 ORIGIN="your-frontend-url"
 PORT=4000
@@ -96,5 +96,6 @@ cd frontend && npm run dev
 ## Future Plans (Optional)
 
 *   Containerized application
-*   Instaed of every user is availabe for chat only those user whose you have add
-*   User is Typing
+*   Instead of every user is availabe for chat only those user whose you have add
+*   User is typing feature
+*   Only limited message will be fetche on opening chat
