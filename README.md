@@ -98,4 +98,4 @@ cd frontend && npm run dev
 *   Containerized application
 *   Instead of every user is availabe for chat only those user whose you have add
 *   User is typing feature
-*   Only limited message will be fetche on opening chat
+*   Only limited message will be fetched on opening chat
