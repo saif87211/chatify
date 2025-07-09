@@ -14,7 +14,7 @@ export default function NoChatSelected() {
                     </div>
                 </div>
                 {/* Greetings Text */}
-                <h2 className="text-2xl font-bold">Welcome to Connectify!</h2>
+                <h2 className="text-2xl font-bold">Welcome to Chatify!</h2>
                 <p className="text-base-content/60">
                     Select a conversation from the sidebar to start chatting
                 </p>
