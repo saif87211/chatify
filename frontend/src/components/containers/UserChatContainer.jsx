@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import chatService from "../../api/chat";
 import { setMessages, resetSelectedUserOrGroup } from "../../slices/chatSlice";
-import { ChatHeader, MessageSkeletion, MessageInput } from "../index";
-import { useSocket } from "../../context/SocketContext";
+import { UserChatHeader, MessageSkeletion, MessageInput } from "../index";
+import { useSocket, socketEvents } from "../../context/SocketContext";
 import { formatMessageTime } from "../../utils/helper";
 
 export default function UserChatContainer() {
@@ -21,7 +21,7 @@ export default function UserChatContainer() {
             setIsMessagesLoading(true);
             try {
                 const response = await chatService.getMessages(selectedUser._id);
-                if (response?.data.messages) {
+                if (response?.data.messages && response.data.messages.length !== messages.length) {
                     dispatch(setMessages(response?.data.messages));
                 }
             } catch (error) {
@@ -36,7 +36,7 @@ export default function UserChatContainer() {
 
     useEffect(() => {
         if (socket) {
-            socket.on("newMessage", (newMessage) => {
+            socket.on(socketEvents.NEW_MESSAGE, (newMessage) => {
                 const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
 
                 if (!isMessageSentFromSelectedUser) return;
@@ -46,7 +46,7 @@ export default function UserChatContainer() {
         }
         return () => {
             if (socket) {
-                socket.off('newMessage');
+                socket.off(socketEvents.NEW_MESSAGE);
             }
         };
     }, [socket, selectedUser, dispatch]);
@@ -59,12 +59,12 @@ export default function UserChatContainer() {
 
     return (isMessagesLoading ? (
         <div className="flex-1 flex flex-col overflow-auto">
-            <ChatHeader />
+            <UserChatHeader />
             <MessageSkeletion />
             <MessageInput />
         </div>) :
         (<div className="flex-1 flex flex-col overflow-auto">
-            <ChatHeader />
+            <UserChatHeader />
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* messages */}
                 {messages && messages.map(message => (
@@ -87,6 +87,7 @@ export default function UserChatContainer() {
                         </div>
                     </div>
                 ))}
+                {!messages.length && <p className="text-center text-slate-400">No Chats</p> }
             </div>
             <MessageInput />
         </div>

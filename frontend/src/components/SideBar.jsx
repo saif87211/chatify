@@ -31,7 +31,7 @@ export default function SideBar() {
         if (authStatus)
             getUsers();
     }, []);
-    console.log(selectedUser);
+
     const filteredUsersAndGroups = showOnlineOnly ? usersAndGroups.filter(user => onlineUsers.includes(user._id)) : usersAndGroups;
 
     const handleCheckBox = (e) => { setShowOnlineOnly(e.target.checked) };
@@ -40,14 +40,14 @@ export default function SideBar() {
         (<SideBarSkeletion />)
         : (
             <aside className={`h-full sm:w-72 sm:flex sm:flex-col ${selectedUser ? "hidden" : "w-full flex flex-col"} border-r border-base-300 duration-200`}>
-                <div className="border-b border-base-300 w-full p-5">
+                <div className="border-b border-base-300 w-full px-5 py-3">
                     <div className="flex justify-between gap-2">
                         <div className="flex items-center gap-2">
                             <Users className="size-6" />
                             <span className={`font-medium block`}>Contacts</span>
                         </div>
                         <div className="dropdown dropdown-end">
-                            <div tabIndex={0} role="button" className="btn m-1 rounded bg-base-100 hover:bg-base-200">New +</div>
+                            <div tabIndex={0} role="button" className="btn btn-sm rounded bg-base-100 hover:bg-base-200">New +</div>
                             <ul tabIndex={0} className="dropdown-content border border-base-300 menu bg-base-100 z-1 w-36 p-2 m-0 shadow-sm">
                                 <li><a>New chat</a></li>
                                 <li><a onClick={() => document.getElementById('createGroupModel').showModal()}>Create Group</a></li>

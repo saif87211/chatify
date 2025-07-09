@@ -4,6 +4,18 @@ import { User } from "./models/user.model.js";
 import { ApiError } from "./utils/ApiError.js";
 import jwt from "jsonwebtoken";
 
+export const socketEvents = Object.freeze({
+    GROUP_UPDATE: "group:update",
+    GROUP_MESSAGE: "group:message",
+    GROUP_DELETE: "group:delete",
+    CONNECTION: "connection",
+    DISCONNECT: "disconnect",
+    JOIN_GROUP_CHAT: "group:join",
+    LEAVE_GROUP_CHAT: "group:leave",
+    NEW_MESSAGE: "message:new",
+    GET_ONLINE_USERS: "getOnlineUsers",
+});
+
 const userSocketMap = {};
 
 const intializeSocket = (server) => {
@@ -15,7 +27,7 @@ const intializeSocket = (server) => {
         }
     });
 
-    io.on("connection", async (socket) => {
+    io.on(socketEvents.CONNECTION, async (socket) => {
         console.log("A user connected ", socket.id);
 
         const token = socket.handshake.auth?.token;
@@ -35,23 +47,23 @@ const intializeSocket = (server) => {
 
         userSocketMap[user._id] = socket.id;
 
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+        io.emit(socketEvents.GET_ONLINE_USERS, Object.keys(userSocketMap));
 
         console.log("userSocketMap:", userSocketMap);
 
-        socket.on("joinGroup", (groupId) => {
+        socket.on(socketEvents.JOIN_GROUP_CHAT, (groupId) => {
             socket.join(groupId);
             console.log(`Socket ${socket.id} joined group room: ${groupId}`);
             console.log(socket.rooms);
         });
-        socket.on('leaveGroupChat', (groupId) => {
+        socket.on(socketEvents.LEAVE_GROUP_CHAT, (groupId) => {
             socket.leave(groupId);
             console.log(`Socket ${socket.id} left group room: ${groupId}`);
         });
-        socket.on("disconnect", () => {
+        socket.on(socketEvents.DISCONNECT, () => {
             delete userSocketMap[user._id];
             console.log("A user disconnected ", socket.id);
-            io.emit("getOnlineUsers", Object.keys(userSocketMap));
+            io.emit(socketEvents.GET_ONLINE_USERS, Object.keys(userSocketMap));
         });
     });
 
@@ -63,3 +75,20 @@ export default intializeSocket;
 export function getReceiverSocketId(userId) {
     return userSocketMap[userId];
 }
+
+export function emitSocketEvent(io, event, data) {
+    if (event === socketEvents.GROUP_UPDATE) {
+        if (data && Array.isArray(data.members)) {
+            data.members.forEach(memberId => {
+                const socketId = getReceiverSocketId(memberId._id.toString());
+                if (socketId) {
+                    io.to(socketId).emit(event, data);
+                }
+            });
+        }
+    } else {
+        for (const key in userSocketMap) {
+            io.to(userSocketMap[key]).emit(event, data);
+        }
+    }
+};

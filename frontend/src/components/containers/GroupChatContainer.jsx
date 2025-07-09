@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import chatService from "../../api/chat";
-import { setMessages, resetSelectedUserOrGroup } from "../../slices/chatSlice";
-import { ChatHeader, MessageSkeletion, MessageInput, GroupProfileModal } from "../index";
-import { useSocket } from "../../context/SocketContext";
+import { setMessages, resetSelectedUserOrGroup, setSlectedUserOrGroup, setUsersAndGroups, setGroupData } from "../../slices/chatSlice";
+import { GroupChatHeader, MessageSkeletion, MessageInput } from "../index";
+import { useSocket, socketEvents } from "../../context/SocketContext";
 import { formatMessageTime } from "../../utils/helper";
 
 export default function GroupChatContainer() {
@@ -13,13 +13,13 @@ export default function GroupChatContainer() {
     const authUser = useSelector(state => state.authSlice.authUserData);
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
     const selectedGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
+    const usersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
     const messageEndRef = useRef(null);
     const socket = useSocket();
 
     const handleGroupMessage = useCallback((newGroupMessage) => {
-        if (newGroupMessage.groupId === selectedGroup._id) {
-            dispatch(setMessages([...messages, newGroupMessage]))
-        }
+        if (newGroupMessage.senderId._id !== authUser._id)
+            dispatch(setMessages([...messages, newGroupMessage]));
     }, [selectedGroup, messages, dispatch]);
 
     useEffect(() => {
@@ -27,9 +27,8 @@ export default function GroupChatContainer() {
             setIsMessagesLoading(true);
             try {
                 const response = await chatService.getGroupMessages(selectedGroup._id);
-                if (response?.data.messages) {
+                if (response?.data.messages && response.data.messages.length !== messages.length) {
                     dispatch(setMessages(response?.data.messages));
-                    console.log(response?.data.messages);
                 }
             } catch (error) {
                 toast.error("can't load the user messages");
@@ -43,17 +42,13 @@ export default function GroupChatContainer() {
 
     useEffect(() => {
         if (socket) {
-            socket.emit("joinGroup", selectedGroup._id);
-
-            socket.on("groupMessage", (newMessage) => {
-                if (newMessage.senderId._id !== authUser._id)
-                    dispatch(setMessages([...messages, newMessage]));
-            });
+            socket.emit(socketEvents.JOIN_GROUP_CHAT, selectedGroup._id);
+            socket.on(socketEvents.GROUP_MESSAGE, handleGroupMessage);
         }
         return () => {
             if (socket) {
-                socket.emit('leaveGroupChat', selectedGroup._id);
-                socket.off("groupMessage");
+                socket.off(socketEvents.GROUP_MESSAGE);
+                socket.emit(socketEvents.LEAVE_GROUP_CHAT, selectedGroup._id);
             }
         };
     }, [socket, selectedGroup, dispatch]);
@@ -66,19 +61,19 @@ export default function GroupChatContainer() {
 
     return (isMessagesLoading ? (
         <div className="flex-1 flex flex-col overflow-auto">
-            <ChatHeader />
+            <GroupChatHeader />
             <MessageSkeletion />
             <MessageInput />
         </div>) :
         (<div className="flex-1 flex flex-col overflow-auto">
-            <ChatHeader />
+            <GroupChatHeader />
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* messages */}
                 {messages && messages.map(message => (
                     <div key={message._id} className={`chat ${message.senderId._id === authUser._id ? "chat-end" : "chat-start"}`} ref={messageEndRef}>
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">
-                                <img className="" src={message.senderId._id === authUser._id ? authUser?.profilephoto || "./user.png" : selectedGroup.profilephoto || "./user.png"} alt="profile pic" />
+                                <img className="" src={message.senderId.profilephoto || "./user.png"} alt="profile pic" />
                             </div>
                         </div>
                         <div className="chat-header mb-1">
@@ -95,9 +90,9 @@ export default function GroupChatContainer() {
                         </div>
                     </div>
                 ))}
+                {!messages.length && <p className="text-center text-slate-400">No Chats</p>}
             </div>
             <MessageInput />
-            <GroupProfileModal />
         </div>
         ));
 }

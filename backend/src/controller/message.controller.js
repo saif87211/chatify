@@ -5,7 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadFileOnCloudinary } from "../utils/cloudinary.js";
 import { io } from "../app.js";
-import { getReceiverSocketId } from "../socket.js";
+import { getReceiverSocketId, socketEvents } from "../socket.js";
 import { Group } from "../models/group.model.js";
 
 const getUsersAndGroupsForSideBar = asyncHandler(async (req, res) => {
@@ -65,12 +65,12 @@ const sendMessage = asyncHandler(async (req, res) => {
         text,
         image: cloudinaryResponse?.url,
     });
-    console.log(receiverId, "receiverId");
+    // console.log(receiverId, "receiverId");
     //TODO: SOCKET implementation
     const receiverSocketId = getReceiverSocketId(receiverId);
-    console.log("receiverSocketId:", receiverSocketId);
+    // console.log("receiverSocketId:", receiverSocketId);
     if (receiverSocketId) {
-        io.to(receiverSocketId).emit("newMessage", newMessage);
+        io.to(receiverSocketId).emit(socketEvents.NEW_MESSAGE, newMessage);
     }
 
     return res.status(200).json(new ApiResponse(200, { newMessage }));

@@ -4,6 +4,9 @@ const initialState = {
     messages: [],
     usersAndGroups: [],
     selectedUserOrGroup: null,
+    isLoading: true,
+    groupData: null,
+    selectedUsersForGroup: []
 };
 
 const chatSlice = createSlice({
@@ -26,10 +29,23 @@ const chatSlice = createSlice({
             if (action.payload === "logout") {
                 state.usersAndGroups = [];
             }
-        }
+        },
+        setGroupData: (state, action) => {
+            state.groupData = action.payload;
+        },
+        setIsLoading: (state, action) => {
+            state.isLoading = action.payload;
+        },
+        setSelectedUsersForGroup: (state, action) => {
+            state.selectedUsersForGroup = action.payload;
+        },
     }
 });
 
-export const { setUsersAndGroups, setSlectedUserOrGroup, setMessages, resetSelectedUserOrGroup } = chatSlice.actions;
+export const { setUsersAndGroups,
+    setSlectedUserOrGroup, setMessages,
+    setSelectedUsersForGroup,
+    resetSelectedUserOrGroup, setIsLoading,
+    setGroupData } = chatSlice.actions;
 
 export default chatSlice.reducer;

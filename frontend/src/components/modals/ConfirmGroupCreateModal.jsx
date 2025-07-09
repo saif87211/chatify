@@ -4,33 +4,51 @@ import chatService from "../../api/chat";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { setUsersAndGroups } from "../../slices/chatSlice";
+import { setSelectedUsersForGroup, setUsersAndGroups } from "../../slices/chatSlice";
 
-export default function ConfirmGroupCreateModal({ selectedGroupUsers, setSelectedGroupUsers }) {
+export default function ConfirmGroupCreateModal() {
     const [groupName, setGroupName] = useState("");
+    const authUser = useSelector(state => state.authSlice.authUserData);
     const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
+    const selectedUsersForGroup = useSelector(state => state.chatSlice.selectedUsersForGroup);
     const dispatch = useDispatch();
+    const [image, setImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
 
     const handleGroupNameChange = (e) => setGroupName(e.target.value);
 
-    const handleCreateGroup = async (e) => {
-        try {
-            const membersIds = selectedGroupUsers.map(user => user._id);
+    const handlImageUpload = (e) => {
+        const file = e.target.files[0]
+        setImage(file);
+        const imageUrl = URL.createObjectURL(file);
+        setPreviewImage(imageUrl);
+    };
 
-            const response = await chatService.createGroup(groupName, membersIds);
+    const handleCreateGroup = async () => {
+        try {
+            const membersIds = selectedUsersForGroup.map(user => user._id);
+
+            const response = await chatService.createGroup(groupName, [authUser._id, ...membersIds], image);
             toast.success(response.message);
             //updateSidebar
-            dispatch(setUsersAndGroups([...sideBarUsersAndGroups, response.data.group]));
+            // dispatch(setUsersAndGroups([...sideBarUsersAndGroups, response.data.group]));
         } catch (error) {
             toast.error(error.response?.data.message || "Something went wrong. Try agian later.");
         } finally {
-            setSelectedGroupUsers([]);
             setGroupName("");
+            setImage(null);
+            dispatch(setSelectedUsersForGroup([]));
         }
     };
 
+    const handleCancel = () => {
+        setGroupName("");
+        setImage(null);
+        setPreviewImage(null);
+    }
+
     return (
-        <dialog id="confirmGroupCreate" className="modal">
+        <dialog id="confirmGroupCreate" className="modal" onClose={handleCancel}>
             <div className="modal-box">
                 <h3 className="font-bold text-lg">New Group</h3>
                 <p className="py-4">Select photo for group and provide your group name.</p>
@@ -40,10 +58,10 @@ export default function ConfirmGroupCreateModal({ selectedGroupUsers, setSelecte
                     <div className="flex items-center gap-4 w-full">
                         {/* SELECT GROUP PHOTO */}
                         <div className="relative min-w-fit">
-                            <img className="size-20 rounded-full object-cover border-4" src={"user.png"} />
+                            <img className="size-20 rounded-full object-cover border-4" src={previewImage || "user.png"} alt="group profile photo" />
                             <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 bg-base-content hover:scale-105 p-2 rounded-full cursor-pointer transition-all duration-200">
                                 <Camera className="w-5 h-5 text-base-200" />
-                                <input type="file" id="avatar-upload" className="hidden" accept="image/*" />
+                                <input type="file" id="avatar-upload" className="hidden" accept="image/*" onChange={handlImageUpload} />
                             </label>
                         </div>
                         {/* GROUP NAME */}
@@ -51,10 +69,10 @@ export default function ConfirmGroupCreateModal({ selectedGroupUsers, setSelecte
                     </div>
                 </div>
 
-                <p className="font-bold my-2">Total Members: {selectedGroupUsers.length} </p>
+                <p className="font-bold my-2">Total Members: {selectedUsersForGroup.length} </p>
                 <div className="flex flex-wrap gap-1">
                     {/* List The users */}
-                    {selectedGroupUsers && selectedGroupUsers.map(user => (
+                    {selectedUsersForGroup && selectedUsersForGroup.map(user => (
                         <div key={user._id} className="flex flex-col items-center justify-center m-2">
                             <img className="size-10 rounded-full" src={user.profilephoto || "./user.png"} alt={user.fullname} />
                             <p className="text-sm">{truncateText(user.fullname, 6)}</p>
@@ -64,7 +82,7 @@ export default function ConfirmGroupCreateModal({ selectedGroupUsers, setSelecte
                 <div className="modal-action">
                     <form method="dialog" className="flex gap-2">
                         {/* if there is a button in form, it will close the modal */}
-                        <button className="btn btn-outline" onClick={() => document.getElementById('createGroupModel').showModal()}>Cancel<Undo2 /></button>
+                        <button className="btn btn-outline" onClick={handleCancel}>Cancel<Undo2 /></button>
 
                         <button className={`btn btn-outline ${!groupName.trim() ? "btn-disabled cursor-not-allowed" : ""}`} onClick={handleCreateGroup}>Create Group<Check className="font-bold" /></button>
                     </form>
