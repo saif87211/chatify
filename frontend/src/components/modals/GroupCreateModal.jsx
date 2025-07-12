@@ -1,7 +1,7 @@
 import { Search, CircleCheck, X, ArrowBigRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ConfirmGroupCreateModal } from "../";
+import { ConfirmGroupCreateModal, modalIds } from "../";
 import { truncateText } from "../../utils/helper";
 import { setSelectedUsersForGroup } from "../../slices/chatSlice";
 
@@ -33,7 +33,8 @@ export default function GroupCreateModal() {
 
     const handleCreateGroup = () => {
         dispatch(setSelectedUsersForGroup(selectedGroupUsers));
-        document.getElementById('confirmGroupCreate').showModal();
+        document.getElementById(modalIds.CONFIRM_GROUP_CREATE).checked = true;
+        setSelectedGroupUsers([]);
     }
 
     const handleSelectUser = (user) => {
@@ -45,8 +46,9 @@ export default function GroupCreateModal() {
 
     return (
         <>
-            <dialog id="createGroupModel" className="modal" onClose={handleModalClose}>
-                <div className="modal-box">
+            <input type="checkbox" id={modalIds.CREATE_GROUP} className="modal-toggle" />
+            <div className="modal" onClose={handleModalClose}>
+                <div className="modal-box" role="dialog">
                     <h3 className="font-bold text-lg">Create Group</h3>
                     <p className="my-2">Select Members</p>
                     {/* SELECTED GROUP */}
@@ -98,16 +100,16 @@ export default function GroupCreateModal() {
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
-                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleModalClose} >
+                            <label className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" htmlFor={modalIds.CREATE_GROUP} onClick={handleModalClose} >
                                 <X className="size-4" strokeWidth={3} />
-                            </button>
-                            <button className={`btn btn-sm btn-outline ${selectedGroupUsers.length ? "" : "btn-disabled cursor-not-allowed"}`} onClick={handleCreateGroup} >
+                            </label>
+                            <label htmlFor={modalIds.CREATE_GROUP} className={`btn btn-sm btn-outline ${selectedGroupUsers.length ? "" : "btn-disabled cursor-not-allowed"}`} onClick={handleCreateGroup} >
                                 Create Group&nbsp;<ArrowBigRight className="text-inherit" />
-                            </button>
+                            </label>
                         </form>
                     </div>
                 </div>
-            </dialog>
+            </div>
             <ConfirmGroupCreateModal />
         </>
     )

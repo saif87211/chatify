@@ -4,7 +4,7 @@ import { User } from "./models/user.model.js";
 import { ApiError } from "./utils/ApiError.js";
 import jwt from "jsonwebtoken";
 
-export const socketEvents = Object.freeze({
+const socketEvents = Object.freeze({
     GROUP_UPDATE: "group:update",
     GROUP_MESSAGE: "group:message",
     GROUP_DELETE: "group:delete",
@@ -72,11 +72,11 @@ const intializeSocket = (server) => {
 
 export default intializeSocket;
 
-export function getReceiverSocketId(userId) {
+function getReceiverSocketId(userId) {
     return userSocketMap[userId];
 }
 
-export function emitSocketEvent(io, event, data) {
+function emitSocketEvent(io, event, data) {
     if (event === socketEvents.GROUP_UPDATE) {
         if (data && Array.isArray(data.members)) {
             data.members.forEach(memberId => {
@@ -92,3 +92,5 @@ export function emitSocketEvent(io, event, data) {
         }
     }
 };
+
+export { socketEvents, getReceiverSocketId, emitSocketEvent }

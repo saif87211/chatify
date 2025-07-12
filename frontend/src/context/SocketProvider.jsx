@@ -35,7 +35,9 @@ export default function SocketProvider({ children }) {
         }
         return () => {
             if (socket) {
-                socket.disconnect(); ``
+                socket.off(socketEvents.GET_ONLINE_USERS);
+                console.log("socket disconnected", socket);
+                socket.disconnect();
                 setSocket(null);
             }
         }

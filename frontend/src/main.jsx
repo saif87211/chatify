@@ -21,25 +21,25 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-      <Toaster toastOptions={{ duration: 2500 }} >
-        {(t) => (
-          <ToastBar toast={t}>
-            {({ icon, message }) => (
-              <>
-                {icon}
-                {message}
-                {t.type !== 'loading' && (
-                  <button onClick={() => toast.dismiss(t.id)}>
-                    <CircleX className='size-5 text-base-content/40' />
-                  </button>
-                )}
-              </>
-            )}
-          </ToastBar>
-        )}
-      </Toaster>
-    </Provider>
+  <Provider store={store}>
+    <RouterProvider router={router} />
+    <Toaster toastOptions={{ duration: 2500, style: { zIndex: 9999 } }}>
+      {(t) => (
+        <ToastBar toast={t}>
+          {({ icon, message }) => (
+            <>
+              {icon}
+              {message}
+              {t.type !== 'loading' && (
+                <button onClick={() => toast.dismiss(t.id)}>
+                  <CircleX className='size-5 text-base-content/40' />
+                </button>
+              )}
+            </>
+          )}
+        </ToastBar>
+      )}
+    </Toaster>
+  </Provider>
   // </StrictMode>,
 )

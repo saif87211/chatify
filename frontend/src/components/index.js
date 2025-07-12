@@ -25,3 +25,10 @@ export {
     ConfirmGroupCreateModal, GroupChatContainer, GroupProfileModal,
     AddUserInGroupModal
 };
+
+export const modalIds = {
+    ADD_USER_IN_GROUP: "ADD_USER_IN_GROUP",
+    CONFIRM_GROUP_CREATE: "CONFIRM_GROUP_CREATE",
+    CREATE_GROUP: "CREATE_GROUP",
+    GROUP_PROFILE: "GROUP_PROFILE"
+}

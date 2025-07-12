@@ -18,6 +18,7 @@ const authSlice = createSlice({
             state.authStatus = false;
             state.authUserData = null;
             state.socket = null;
+            state.onlineUsers = [];
         },
         setOnlineUsers: (state, action) => {
             if (state.authStatus) {

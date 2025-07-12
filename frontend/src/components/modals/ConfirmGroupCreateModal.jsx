@@ -5,11 +5,11 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedUsersForGroup, setUsersAndGroups } from "../../slices/chatSlice";
+import { modalIds } from "..";
 
 export default function ConfirmGroupCreateModal() {
     const [groupName, setGroupName] = useState("");
     const authUser = useSelector(state => state.authSlice.authUserData);
-    const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
     const selectedUsersForGroup = useSelector(state => state.chatSlice.selectedUsersForGroup);
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
@@ -30,26 +30,25 @@ export default function ConfirmGroupCreateModal() {
 
             const response = await chatService.createGroup(groupName, [authUser._id, ...membersIds], image);
             toast.success(response.message);
-            //updateSidebar
-            // dispatch(setUsersAndGroups([...sideBarUsersAndGroups, response.data.group]));
-        } catch (error) {
-            toast.error(error.response?.data.message || "Something went wrong. Try agian later.");
-        } finally {
             setGroupName("");
             setImage(null);
             dispatch(setSelectedUsersForGroup([]));
-        }
+        } catch (error) {
+            toast.error(error.response?.data.message || "Something went wrong. Try agian later.");
+        } 
     };
 
     const handleCancel = () => {
+        document.getElementById(modalIds.CREATE_GROUP).checked = true;
         setGroupName("");
         setImage(null);
         setPreviewImage(null);
     }
 
-    return (
-        <dialog id="confirmGroupCreate" className="modal" onClose={handleCancel}>
-            <div className="modal-box">
+    return (<>
+        <input type="checkbox" id={modalIds.CONFIRM_GROUP_CREATE} className="modal-toggle" />
+        <div className="modal" onClose={handleCancel}>
+            <div className="modal-box" role="dialog">
                 <h3 className="font-bold text-lg">New Group</h3>
                 <p className="py-4">Select photo for group and provide your group name.</p>
 
@@ -69,9 +68,13 @@ export default function ConfirmGroupCreateModal() {
                     </div>
                 </div>
 
-                <p className="font-bold my-2">Total Members: {selectedUsersForGroup.length} </p>
+                <p className="font-bold my-2">Total Members: {selectedUsersForGroup.length + 1} </p>
                 <div className="flex flex-wrap gap-1">
                     {/* List The users */}
+                    <div className="flex flex-col items-center justify-center m-2">
+                        <img className="size-10 rounded-full" src={authUser?.profilephoto || "./user.png"} alt={authUser?.fullname} />
+                        <p className="text-sm">You</p>
+                    </div>
                     {selectedUsersForGroup && selectedUsersForGroup.map(user => (
                         <div key={user._id} className="flex flex-col items-center justify-center m-2">
                             <img className="size-10 rounded-full" src={user.profilephoto || "./user.png"} alt={user.fullname} />
@@ -82,12 +85,13 @@ export default function ConfirmGroupCreateModal() {
                 <div className="modal-action">
                     <form method="dialog" className="flex gap-2">
                         {/* if there is a button in form, it will close the modal */}
-                        <button className="btn btn-outline" onClick={handleCancel}>Cancel<Undo2 /></button>
+                        <label className="btn btn-outline" htmlFor={modalIds.CONFIRM_GROUP_CREATE} onClick={handleCancel}>Cancel<Undo2 /></label>
 
-                        <button className={`btn btn-outline ${!groupName.trim() ? "btn-disabled cursor-not-allowed" : ""}`} onClick={handleCreateGroup}>Create Group<Check className="font-bold" /></button>
+                        <label htmlFor={modalIds.CONFIRM_GROUP_CREATE} className={`btn btn-outline ${!groupName.trim() ? "btn-disabled cursor-not-allowed" : ""}`} onClick={handleCreateGroup}>Create Group<Check className="font-bold" /></label>
                     </form>
                 </div>
             </div>
-        </dialog>
+        </div>
+    </>
     )
 }

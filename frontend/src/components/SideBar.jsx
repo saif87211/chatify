@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { setUsersAndGroups, setSlectedUserOrGroup } from "../slices/chatSlice";
 import toast from "react-hot-toast";
-import { SideBarSkeletion, GroupCreateModal } from "./index";
+import { SideBarSkeletion, GroupCreateModal, modalIds } from "./index";
 import chatService from "../api/chat";
 
 export default function SideBar() {
@@ -50,7 +50,7 @@ export default function SideBar() {
                             <div tabIndex={0} role="button" className="btn btn-sm rounded bg-base-100 hover:bg-base-200">New +</div>
                             <ul tabIndex={0} className="dropdown-content border border-base-300 menu bg-base-100 z-1 w-36 p-2 m-0 shadow-sm">
                                 <li><a>New chat</a></li>
-                                <li><a onClick={() => document.getElementById('createGroupModel').showModal()}>Create Group</a></li>
+                                <li><label htmlFor={modalIds.CREATE_GROUP}>Create Group</label></li>
                             </ul>
                         </div>
                     </div>

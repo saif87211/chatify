@@ -14,7 +14,7 @@ export default function Navbar() {
     const handleLogout = async () => {
         const response = await auth.logout();
         dispatch(logout());
-        dispatch(resetSelectedUserOrGroup())
+        dispatch(resetSelectedUserOrGroup("logout"));
         navigate("/login");
     };
     return (

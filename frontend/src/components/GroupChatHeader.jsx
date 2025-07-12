@@ -1,7 +1,7 @@
 import { X, UserPlus, Settings2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setGroupData, resetSelectedUserOrGroup } from "../slices/chatSlice";
-import { AddUserInGroupModal, GroupProfileModal } from ".";
+import { AddUserInGroupModal, GroupProfileModal, modalIds } from ".";
 
 export default function GroupChatHeader() {
     const selectedGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
@@ -26,14 +26,14 @@ export default function GroupChatHeader() {
                         </div>
                     </div>
                     <div className="flex items-center gap-x-5">
-                        <button className="btn btn-sm btn-rounded text-sm" onClick={() => document.getElementById("add-new-member").showModal()}>
+                        <label className="btn btn-sm btn-rounded text-sm" htmlFor={modalIds.ADD_USER_IN_GROUP}>
                             <UserPlus size="18" />
                             <span className="hidden sm:inline">Add User</span>
-                        </button>
-                        <button className="btn btn-sm btn-rounded text-sm" onClick={() => document.getElementById("group-profile").showModal()}>
+                        </label>
+                        <label htmlFor={modalIds.GROUP_PROFILE} className="btn btn-sm btn-rounded text-sm">
                             <Settings2 size="18" />
                             <span className="hidden sm:inline">Group Info</span>
-                        </button>
+                        </label>
                         {/* Close button */}
                         <button onClick={() => { dispatch(resetSelectedUserOrGroup()); dispatch(setGroupData(null)); }}>
                             <X />
