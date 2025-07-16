@@ -12,6 +12,7 @@ export default function UserChatContainer() {
     const messages = useSelector(state => state.chatSlice.messages);
     const authUser = useSelector(state => state.authSlice.authUserData);
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
+    const [typing, SetTyping] = useState(false);
     const selectedUser = useSelector(state => state.chatSlice.selectedUserOrGroup);
     const messageEndRef = useRef(null);
     const socket = useSocket();
@@ -43,19 +44,28 @@ export default function UserChatContainer() {
 
                 dispatch(setMessages([newMessage]));
             });
+            socket.on(socketEvents.USER_TYPING, () => {
+                SetTyping(true);
+            });
+            socket.on(socketEvents.USER_STOP_TYPING, () => {
+                SetTyping(false);
+            });
         }
         return () => {
             if (socket) {
                 socket.off(socketEvents.NEW_MESSAGE);
+                socket.off(socketEvents.USER_TYPING);
+                socket.off(socketEvents.USER_STOP_TYPING);
+                SetTyping(false);
             }
         };
     }, [socket, selectedUser, dispatch]);
 
     useEffect(() => {
         if (messageEndRef.current) {
-            messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
         }
-    }, [messages, isMessagesLoading]);
+    }, [messages, isMessagesLoading, typing]);
 
     return (isMessagesLoading ? (
         <div className="flex-1 flex flex-col overflow-auto">
@@ -68,7 +78,7 @@ export default function UserChatContainer() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* messages */}
                 {messages && messages.map(message => (
-                    <div key={message._id} className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`} ref={messageEndRef}>
+                    <div key={message._id} className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}>
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">
                                 <img className="" src={message.senderId === authUser._id ? authUser?.profilephoto || "./user.png" : selectedUser.profilephoto || "./user.png"} alt="profile pic" />
@@ -87,7 +97,13 @@ export default function UserChatContainer() {
                         </div>
                     </div>
                 ))}
-                {!messages.length && <p className="text-center text-slate-400">No Chats</p> }
+                {typing ? (<div className="chat-start">
+                    <div className="chat-bubble text-wrap flex flex-col">
+                        <span className="loading loading-dots loading-md"></span>
+                    </div>
+                </div>) : (null)}
+                <div className="size-0 p-0 m-0" ref={messageEndRef}></div>
+                {!messages.length && <p className="text-center text-slate-400">No Chats</p>}
             </div>
             <MessageInput />
         </div>

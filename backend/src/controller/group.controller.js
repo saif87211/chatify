@@ -34,7 +34,6 @@ const createGroup = asyncHandler(async (req, res) => {
     return res.status(201).json(new ApiResponse(201, { group }, "Group Created Succefully."));
 });
 
-
 const sendMessageToGroup = asyncHandler(async (req, res) => {
     const text = req.body.text;
     const imageLocalPath = req.file?.path;
@@ -133,8 +132,7 @@ const removeUserFormGroup = asyncHandler(async (req, res) => {
     if (!group) {
         throw new ApiError(400, "Group not found.");
     }
-    console.trace(group);
-    console.trace(currentUserId);
+
     const isCurrentUserAdmin = group.admin.toString() === currentUserId.toString();
 
     if (!isCurrentUserAdmin) {

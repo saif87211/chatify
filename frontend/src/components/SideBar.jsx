@@ -5,6 +5,7 @@ import { setUsersAndGroups, setSlectedUserOrGroup } from "../slices/chatSlice";
 import toast from "react-hot-toast";
 import { SideBarSkeletion, GroupCreateModal, modalIds } from "./index";
 import chatService from "../api/chat";
+import { truncateText } from "../utils/helper";
 
 export default function SideBar() {
     const usersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
@@ -84,7 +85,7 @@ export default function SideBar() {
                             </div>
                             {/* user info*/}
                             <div className={`${selectedUser ? "hidden" : ""} sm:block text-left min-w-0`}>
-                                <div className="font-medium truncate">{userOrGroup.fullname ? userOrGroup.fullname : userOrGroup.name}</div>
+                                <div className="font-medium truncate">{truncateText(userOrGroup.fullname || userOrGroup.name, 18)}</div>
                                 <div className="text-sm text-zinc-400">
                                     {userOrGroup.members ? "Group" : (onlineUsers.includes(userOrGroup._id) ? "Online" : "offline")}
                                 </div>

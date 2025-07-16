@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Image, Send } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages } from "../slices/chatSlice";
 import chatService from "../api/chat";
+import { socketEvents, useSocket } from "../context/SocketContext";
 
 export default function MessageInput() {
     const [text, setText] = useState("");
@@ -11,8 +12,29 @@ export default function MessageInput() {
     const [selectedImage, setSelectedImage] = useState(null);
     const fileInputRef = useRef(null);
     const selectedUserOrGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
-    const messages = useSelector(state => state.chatSlice.messages);
+    const authUserData = useSelector(state => state.authSlice.authUserData);
+    const socket = useSocket();
     const disptach = useDispatch();
+    const typingTimeOutRef = useRef(null);
+
+    let typingEvent, stopTypingEvent, dataToBeSendViaSocket;
+
+    if (selectedUserOrGroup?.members) {
+        typingEvent = socketEvents.GROUP_USER_TYPING;
+        stopTypingEvent = socketEvents.GROUP_USER_STOP_TYPING;
+        dataToBeSendViaSocket = { groupId: selectedUserOrGroup._id, userId: authUserData._id };
+    } else {
+        typingEvent = socketEvents.USER_TYPING;
+        stopTypingEvent = socketEvents.USER_STOP_TYPING;
+        dataToBeSendViaSocket = selectedUserOrGroup;
+    }
+
+
+    useEffect(() => {
+        return () => {
+            if (typingTimeOutRef.current) clearTimeout(typingTimeOutRef.current);
+        };
+    }, [])
 
     const handleImage = (e) => {
         const file = e.target.files[0];
@@ -29,7 +51,21 @@ export default function MessageInput() {
         reader.readAsDataURL(file);
     }
 
-    const handleInputChange = (e) => setText(e.target.value)
+    const handleInputChange = (e) => {
+        setText(e.target.value);
+
+        if (!socket) return;
+
+        if (e.target.value.length < 3) return;
+
+        socket.emit(typingEvent, dataToBeSendViaSocket);
+
+        if (typingTimeOutRef.current) clearTimeout(typingTimeOutRef.current);
+
+        typingTimeOutRef.current = setTimeout(() => {
+            socket.emit(stopTypingEvent, dataToBeSendViaSocket);
+        }, 1000);
+    }
 
     const removeImage = () => {
         setImagePreview(null);
@@ -39,14 +75,17 @@ export default function MessageInput() {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!text.trim() && !imagePreview) return;
-
+        if (socket) {
+            if (typingTimeOutRef.current) clearTimeout(typingTimeOutRef.current);
+            socket.emit(stopTypingEvent, dataToBeSendViaSocket);
+        }
         try {
             let response;
             if (selectedUserOrGroup.members)
                 response = await chatService.sendMessageToGroup(selectedUserOrGroup._id, text.trim(), selectedImage);
             else
                 response = await chatService.sendMessage(selectedUserOrGroup._id, text.trim(), selectedImage);
-            
+
             const newMessage = response?.data.newMessage;
             if (newMessage) {
                 disptach(setMessages([newMessage]));

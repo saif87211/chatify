@@ -65,10 +65,9 @@ const sendMessage = asyncHandler(async (req, res) => {
         text,
         image: cloudinaryResponse?.url,
     });
-    // console.log(receiverId, "receiverId");
-    //TODO: SOCKET implementation
+    
     const receiverSocketId = getReceiverSocketId(receiverId);
-    // console.log("receiverSocketId:", receiverSocketId);
+
     if (receiverSocketId) {
         io.to(receiverSocketId).emit(socketEvents.NEW_MESSAGE, newMessage);
     }

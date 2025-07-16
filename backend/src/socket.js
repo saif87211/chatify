@@ -3,6 +3,7 @@ import { config } from "./config/config.js";
 import { User } from "./models/user.model.js";
 import { ApiError } from "./utils/ApiError.js";
 import jwt from "jsonwebtoken";
+import { Group } from "./models/group.model.js";
 
 const socketEvents = Object.freeze({
     GROUP_UPDATE: "group:update",
@@ -14,6 +15,10 @@ const socketEvents = Object.freeze({
     LEAVE_GROUP_CHAT: "group:leave",
     NEW_MESSAGE: "message:new",
     GET_ONLINE_USERS: "getOnlineUsers",
+    USER_TYPING: "user:typing",
+    USER_STOP_TYPING: "user:stop-typing",
+    GROUP_USER_TYPING: "group_user:typing",
+    GROUP_USER_STOP_TYPING: "group_user:stop-typing"
 });
 
 const userSocketMap = {};
@@ -51,11 +56,33 @@ const intializeSocket = (server) => {
 
         console.log("userSocketMap:", userSocketMap);
 
-        socket.on(socketEvents.JOIN_GROUP_CHAT, (groupId) => {
-            socket.join(groupId);
+        socket.on(socketEvents.JOIN_GROUP_CHAT, async (groupId) => {
             console.log(`Socket ${socket.id} joined group room: ${groupId}`);
-            console.log(socket.rooms);
+            const group = await Group.findById(groupId);
+            if (!group) {
+                throw new ApiError(404, "Group not found.");
+            }
+            socket.join(group._id.toString());
+            io.to(groupId).emit("EXTRA EVENT FROM SERVER");
         });
+
+        socket.on(socketEvents.USER_TYPING, (data) => {
+            const socketId = getReceiverSocketId(data._id);
+            socket.to(socketId).emit(socketEvents.USER_TYPING, data);
+        });
+
+        socket.on(socketEvents.USER_STOP_TYPING, (data) => {
+            const socketId = getReceiverSocketId(data._id);
+            socket.to(socketId).emit(socketEvents.USER_STOP_TYPING, data);
+        });
+        socket.on(socketEvents.GROUP_USER_TYPING, (data) => {
+            socket.to(data.groupId).emit(socketEvents.GROUP_USER_TYPING, data);
+        });
+
+        socket.on(socketEvents.GROUP_USER_STOP_TYPING, (data) => {
+            socket.to(data.groupId).emit(socketEvents.GROUP_USER_STOP_TYPING, data);
+        });
+
         socket.on(socketEvents.LEAVE_GROUP_CHAT, (groupId) => {
             socket.leave(groupId);
             console.log(`Socket ${socket.id} left group room: ${groupId}`);
@@ -78,6 +105,7 @@ function getReceiverSocketId(userId) {
 
 function emitSocketEvent(io, event, data) {
     if (event === socketEvents.GROUP_UPDATE) {
+        //sending update to olny those who's still member of group 
         if (data && Array.isArray(data.members)) {
             data.members.forEach(memberId => {
                 const socketId = getReceiverSocketId(memberId._id.toString());

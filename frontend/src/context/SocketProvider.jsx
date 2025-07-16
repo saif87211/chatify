@@ -46,7 +46,7 @@ export default function SocketProvider({ children }) {
     useEffect(() => {
         if (socket) {
             socket.on(socketEvents.GROUP_UPDATE, (data) => {
-                console.trace("GROUP_UPDATE: ", data);
+
                 if (selectedGroupRef.current && selectedGroupRef.current._id === data._id) {
                     dispatch(setGroupData(data));
                 }
@@ -63,7 +63,7 @@ export default function SocketProvider({ children }) {
             socket.on(socketEvents.GROUP_DELETE, (data) => {
                 const latestUsersAndGroups = usersAndGroupsRef.current;
                 const updateUsersAndGroups = latestUsersAndGroups.filter(userOrGroup => userOrGroup._id !== data.groupId);
-                console.trace(updateUsersAndGroups);
+
                 dispatch(setUsersAndGroups(updateUsersAndGroups));
                 dispatch(resetSelectedUserOrGroup());
             });

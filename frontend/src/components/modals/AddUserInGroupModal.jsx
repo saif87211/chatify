@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { ArrowBigRight, CircleCheck, Search, UserRoundPlus, X } from "lucide-react";
 import toast from "react-hot-toast";
 import chatService from "../../api/chat";
-import { setSlectedUserOrGroup } from "../../slices/chatSlice";
 import { modalIds } from "..";
 
 export default function AddUserInGroupModal() {
@@ -12,7 +11,6 @@ export default function AddUserInGroupModal() {
     const [selectedGroupUsers, setSelectedGroupUsers] = useState([]);
     const [filterUsers, setFilterUsers] = useState([]);
     const [email, setEmail] = useState("");
-    const dispatch = useDispatch();
     const modalRef = useRef(null);
     const sideBarUsersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
 
@@ -59,7 +57,7 @@ export default function AddUserInGroupModal() {
         }
         try {
             const response = await chatService.addUserInGroup(selectedGroup._id, email);
-            // dispatch(setSlectedUserOrGroup(response.data));
+
             if (response.success) toast.success("New user is added in the group");
             setEmail("");
         } catch (error) {

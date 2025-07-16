@@ -34,7 +34,7 @@ class Chat {
             formData.append("groupname", groupname);
             membersIds.forEach((id) => formData.append("members[]", id));
             formData.append("image", image);
-            console.log(formData);
+
             const response = await axiosInstance.post("/api/v1/groups/create-group", formData)
             return response.data;
         } catch (error) {

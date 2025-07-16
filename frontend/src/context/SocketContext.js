@@ -12,6 +12,10 @@ const socketEvents = Object.freeze({
     LEAVE_GROUP_CHAT: "group:leave",
     NEW_MESSAGE: "message:new",
     GET_ONLINE_USERS: "getOnlineUsers",
+    USER_TYPING: "user:typing",
+    USER_STOP_TYPING: "user:stop-typing",
+    GROUP_USER_TYPING: "group_user:typing",
+    GROUP_USER_STOP_TYPING: "group_user:stop-typing"
 });
 
 const getSocket = () => {

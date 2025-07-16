@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import chatService from "../../api/chat";
-import { setMessages, resetSelectedUserOrGroup, setSlectedUserOrGroup, setUsersAndGroups, setGroupData } from "../../slices/chatSlice";
+import { setMessages, resetSelectedUserOrGroup } from "../../slices/chatSlice";
 import { GroupChatHeader, MessageSkeletion, MessageInput } from "../index";
 import { useSocket, socketEvents } from "../../context/SocketContext";
 import { formatMessageTime } from "../../utils/helper";
@@ -11,9 +11,10 @@ export default function GroupChatContainer() {
     const dispatch = useDispatch();
     const messages = useSelector(state => state.chatSlice.messages);
     const authUser = useSelector(state => state.authSlice.authUserData);
+    const groupData = useSelector(state => state.chatSlice.groupData);
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
+    const [typingUserId, setTypingUserId] = useState(null);
     const selectedGroup = useSelector(state => state.chatSlice.selectedUserOrGroup);
-    const usersAndGroups = useSelector(state => state.chatSlice.usersAndGroups);
     const messageEndRef = useRef(null);
     const socket = useSocket();
 
@@ -41,15 +42,24 @@ export default function GroupChatContainer() {
     }, [selectedGroup, dispatch]);
 
     useEffect(() => {
-        if (socket) {
-            socket.emit(socketEvents.JOIN_GROUP_CHAT, selectedGroup._id);
-            socket.on(socketEvents.GROUP_MESSAGE, handleGroupMessage);
-        }
+        if (!socket) return;
+        socket.emit(socketEvents.JOIN_GROUP_CHAT, selectedGroup._id);
+        socket.on(socketEvents.GROUP_MESSAGE, handleGroupMessage);
+
+        socket.on(socketEvents.GROUP_USER_TYPING, (data) => {
+            setTypingUserId(data.userId);
+        });
+        socket.on(socketEvents.GROUP_USER_STOP_TYPING, (data) => {
+            setTypingUserId(null);
+        });
+
+
         return () => {
-            if (socket) {
-                socket.off(socketEvents.GROUP_MESSAGE);
-                socket.emit(socketEvents.LEAVE_GROUP_CHAT, selectedGroup._id);
-            }
+            if (!socket) return;
+            socket.off(socketEvents.GROUP_MESSAGE);
+            socket.off(socketEvents.GROUP_USER_TYPING);
+            socket.off(socketEvents.GROUP_USER_STOP_TYPING);
+            socket.emit(socketEvents.LEAVE_GROUP_CHAT, selectedGroup._id);
         };
     }, [socket, selectedGroup, dispatch]);
 
@@ -57,7 +67,12 @@ export default function GroupChatContainer() {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
-    }, [messages, isMessagesLoading]);
+    }, [messages, isMessagesLoading, typingUserId]);
+
+    const findUserName = (userId) => {
+        const user = groupData?.members.find(member => member._id === userId)
+        return user.fullname;
+    };
 
     return (isMessagesLoading ? (
         <div className="flex-1 flex flex-col overflow-auto">
@@ -70,7 +85,7 @@ export default function GroupChatContainer() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* messages */}
                 {messages && messages.map(message => (
-                    <div key={message._id} className={`chat ${message.senderId._id === authUser._id ? "chat-end" : "chat-start"}`} ref={messageEndRef}>
+                    <div key={message._id} className={`chat ${message.senderId._id === authUser._id ? "chat-end" : "chat-start"}`}>
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">
                                 <img className="" src={message.senderId.profilephoto || "./user.png"} alt="profile pic" />
@@ -90,6 +105,15 @@ export default function GroupChatContainer() {
                         </div>
                     </div>
                 ))}
+                {typingUserId ? (<div className="chat-start">
+                    <div className="chat-header mb-1">
+                        {findUserName(typingUserId)}
+                    </div>
+                    <div className="chat-bubble text-wrap flex flex-col">
+                        <span className="loading loading-dots loading-md"></span>
+                    </div>
+                </div>) : (null)}
+                <div className="size-0 p-0 m-0" ref={messageEndRef}></div>
                 {!messages.length && <p className="text-center text-slate-400">No Chats</p>}
             </div>
             <MessageInput />

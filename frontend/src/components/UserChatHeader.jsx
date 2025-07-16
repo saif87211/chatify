@@ -4,6 +4,7 @@ import { resetSelectedUserOrGroup } from "../slices/chatSlice";
 
 export default function UserChatHeader() {
     const selectedUser = useSelector(state => state.chatSlice.selectedUserOrGroup);
+    const onlineUsers = useSelector(state => state.authSlice.onlineUsers);
     const dispatch = useDispatch();
 
     return (
@@ -19,7 +20,7 @@ export default function UserChatHeader() {
                     {/* user info */}
                     <div>
                         <h3 className="font-medium">{selectedUser.fullname}</h3>
-                        <p className="text-sm text-base-content/70">Offline</p>
+                        <p className="text-sm text-base-content/70">{onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}</p>
                     </div>
                 </div>
                 {/* Close button */}
