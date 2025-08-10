@@ -30,7 +30,7 @@ export default function Login() {
                 localStorage.setItem("token", response.data.token);
                 dispatch(login(response.data.loginUser));
             }
-            navigate("/");
+            navigate("/app");
         } catch (error) {
             toast.error(error.response?.data.message || "Something went wrong.");
         }

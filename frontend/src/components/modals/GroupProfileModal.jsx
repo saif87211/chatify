@@ -18,7 +18,6 @@ export default function GroupProfileModal() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log(groupData);
         const getGroupInformation = async () => {
             try {
                 const response = await chatService.getGroupInfo(selectedGroup._id);

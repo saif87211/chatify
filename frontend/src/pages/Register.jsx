@@ -23,7 +23,7 @@ export default function Register() {
                     <div className="text-center">
                         <p className="text-base-content/60">
                             Already register?{" "}
-                            <Link to="/login" className="link link-primary">
+                            <Link to="/" className="link link-primary">
                                 Login
                             </Link>
                         </p>
