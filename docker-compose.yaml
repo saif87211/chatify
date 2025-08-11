@@ -1,0 +1,18 @@
+services:
+  backend:
+    build: ./backend/
+    container_name: chatify-backend1.0
+    ports:
+      - "4000:4000"
+    env_file:
+      - path: ./backend/.env
+  frontned:
+    build: ./frontend/
+    container_name: chatify-frontned1.0
+    ports:
+      - "80:80"
+    env_file:
+      - path: ./frontend/.env
+    depends_on:
+      - backend
+    
